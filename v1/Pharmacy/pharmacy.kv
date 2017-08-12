@@ -1,0 +1,126 @@
+#: include includes/colors.kv
+#: include includes/footer_header.kv
+#: include page/sale.kv
+#: include page/setting.kv
+#: include page/inventory.kv
+#: include page/dashboard.kv
+
+#: import C kivy.utils.get_color_from_hex
+<Manager>
+
+<MainPageButton>:
+    markup: True
+    pos_hint: {'center_x':0.5,'center_y':0.5}
+    # on_press: self.background_color = C('#2196F3')
+
+<MainLayout>:
+    orientation: 'vertical'
+    canvas.before:
+        Rectangle:
+            source: 'img/pharmacy_main.jpg'
+            pos: self.pos
+            size: self.size
+    Header:
+
+    Manager:
+        id: manager
+
+        Screen:
+            # screens[0]
+            name: 'main'
+
+            GridLayout:
+                cols: 2
+                spacing: 10
+                padding: 100
+                MainPageButton:
+                    on_press:
+                        manager.transition.direction = 'left'
+                        manager.current = 'dashboard'
+                    # text: 5*' '+'[size={}][font=PICON]S[/font][/size]\n[size={}]Main[/size]'.format(int(self.width/5), int(self.width/8))
+                    BoxLayout:
+                        orientation: 'vertical'
+                        pos: self.parent.pos
+                        size: self.parent.size
+                        Label:
+                            markup: True
+                            text: '[size={}][font=PICTO]7[/font][/size]'.format(int(self.width/5))
+                        Label:
+                            markup: True
+                            text: '[size={}]Dashboard[/size]'.format(int(self.width/8))
+                MainPageButton:
+                    # text: 5*' '+'[size={}][font=PICTO]6[/font][/size]\n[size={}]Sales[/size]'.format(int(self.width/5),int(self.width/8))
+                    on_press:
+                        manager.transition.direction = 'left'
+                        manager.current = 'sales'
+                    BoxLayout:
+                        orientation: 'vertical'
+                        pos: self.parent.pos
+                        size: self.parent.size
+                        Label:
+                            markup: True
+                            text: '[size={}][font=PICTO]6[/font][/size]'.format(int(self.width/5))
+                        Label:
+                            markup: True
+                            text: '[size={}]Sales[/size]'.format(int(self.width/8))
+                MainPageButton:
+                    on_press:
+                        manager.transition.direction = 'left'
+                        manager.current = 'inventory'
+                    #text: 17*' '+'[size={}][font=PICTO]\[/font][/size]\n[size={}]Inventory[/size]'.format(int(self.width/5),int(self.width/9))
+                    BoxLayout:
+                        orientation: 'vertical'
+                        pos: self.parent.pos
+                        size: self.parent.size
+                        Label:
+                            markup: True
+                            text: '[size={}][font=PICTO]\[/font][/size]'.format(int(self.width/5))
+                        Label:
+                            markup: True
+                            text: '[size={}]Inventory[/size]'.format(int(self.width/8))
+                MainPageButton:
+                    on_press:
+                        manager.transition.direction = 'left'
+                        manager.current = 'settings'
+                    #text: 15*' '+'[size={}][font=rap]Å[/font][/size]\n[size={}]Settings[/size]'.format(int(self.width/5),int(self.width/8))
+                    BoxLayout:
+                        orientation: 'vertical'
+                        pos: self.parent.pos
+                        size: self.parent.size
+                        Label:
+                            markup: True
+                            text: '[size={}][font=rap]Å[/font][/size]'.format(int(self.width/5))
+                        Label:
+                            markup: True
+                            text: '[size={}]Settings[/size]'.format(int(self.width/8))
+        Screen:
+            name: 'sales'
+            on_enter:
+                sales.ids.saleButton.background_normal = 'atlas://data/images/defaulttheme/button_pressed'
+            Sales:
+                id : sales
+
+        Screen:
+            name: 'inventory'
+            on_enter:
+                inventory.ids.inventoryButton.background_normal = 'atlas://data/images/defaulttheme/button_pressed'
+            Inventory:
+                id: inventory
+
+        Screen:
+            name: 'settings'
+            on_enter:
+                settings.ids.settingButton.background_normal = 'atlas://data/images/defaulttheme/button_pressed'
+            Setting:
+                id: settings
+
+        Screen:
+            name: 'dashboard'
+            on_enter:
+                dashboard.ids.dashboardButton.background_normal = 'atlas://data/images/defaulttheme/button_pressed'
+            Dashboard:
+                id: dashboard
+
+
+    Footer:
+

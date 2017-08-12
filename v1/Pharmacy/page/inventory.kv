@@ -1,0 +1,79 @@
+#: include includes/colors.kv
+#: import C kivy.utils.get_color_from_hex
+
+<Inventory@BoxLayout>:
+
+<SideButton@Button>:
+    markup: True
+    background_color: C(sidebar_color)
+    background_normal: ''
+
+<Sep@Label>:
+    size_hint_y: None
+    height: '3px'
+
+<Inventory>:
+    BoxLayout:
+        size_hint_x: None
+        orientation: 'vertical'
+        width: '250px'
+        SideButton:
+            on_press:
+                root.parent.parent.transition.direction="right"
+                root.parent.parent.current = 'dashboard'
+            BoxLayout:
+                orientation: 'vertical'
+                pos: self.parent.pos
+                size: self.parent.size
+                Label:
+                    markup: True
+                    text: '[size={}][font=PICTO]7[/font][/size]'.format(int(self.width/5))
+                Label:
+                    markup: True
+                    text: '[size={}]Dashboard[/size]'.format(int(self.width/8))
+
+        Sep:
+        SideButton:
+            on_press:
+                root.parent.parent.transition.direction="right"
+                root.parent.parent.current = 'sales'
+            BoxLayout:
+                orientation: 'vertical'
+                pos: self.parent.pos
+                size: self.parent.size
+                Label:
+                    markup: True
+                    text: '[size={}][font=PICTO]6[/font][/size]'.format(int(self.width/5))
+                Label:
+                    markup: True
+                    text: '[size={}]Sales[/size]'.format(int(self.width/8))
+        Sep
+        SideButton:
+            id: inventoryButton
+            BoxLayout:
+                orientation: 'vertical'
+                pos: self.parent.pos
+                size: self.parent.size
+                Label:
+                    markup: True
+                    text: '[color={}][b][size={}][font=PICTO]\[/font][/size][/b][/color]'.format(sidebar_color,int(self.width/5))
+                Label:
+                    markup: True
+                    text: '[color={}][size={}][b]Inventory[/b][/size][/color]'.format(sidebar_color,int(self.width/8))
+        Sep
+        SideButton:
+            on_press:
+                root.parent.parent.transition.direction="left"
+                root.parent.parent.current = 'settings'
+            BoxLayout:
+                orientation: 'vertical'
+                pos: self.parent.pos
+                size: self.parent.size
+                Label:
+                    markup: True
+                    text: '[size={}][font=rap]Å[/font][/size]'.format(int(self.width/5))
+                Label:
+                    markup: True
+                    text: '[size={}]Settings[/size]'.format(int(self.width/8))
+
+    BoxLayout:

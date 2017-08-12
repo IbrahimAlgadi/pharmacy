@@ -1,0 +1,53 @@
+#: include includes/colors.kv
+#: import C kivy.utils.get_color_from_hex
+
+
+<Header@BoxLayout>:
+    canvas.before:
+        Color:
+            rgba: C(color_primary)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    size_hint_y: None
+    height: '50px'
+    Button:
+        background_normal: ''
+        background_color: C(color_primary)
+        size_hint_x: None
+        width: '200px'
+        markup: True
+        text: '[color={}][size=40][font=rap]S[/font][/size] [size=30]Home[/size][/color]'.format(danger)
+        on_press:
+            root.parent.ids.manager.transition.direction = 'right'
+            root.parent.ids.manager.current="main"
+            #manager.current = 'main'
+    Label:
+        markup: True
+        text: '[size={}]I3M PHARMACY MANAGEMENT SYSTEM[/size]'.format(int(self.width/40))
+    Button:
+        background_normal: ''
+        background_color: C(color_primary)
+        size_hint_x: None
+        width: '200px'
+        markup: True
+        text: '[color={}][size=40][font=rap]v[/font][/size] [size=30]Logout[/size][/color]'.format(danger)
+        # on_press: manager.current = 'main'
+
+<Footer@BoxLayout>:
+    canvas.before:
+        Color:
+            rgba: C(color_primary)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    size_hint_y: None
+    height: '50px'
+    markup: True
+    text: "[size={}]Powered By I3M[/size]".format(self.width/50)
+    Label:
+        text:'Power By i3m'
+    Label:
+    Label:
+    Label:
+        text:'Logged by : Akashi'
