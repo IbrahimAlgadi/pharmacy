@@ -1,7 +1,10 @@
 #: include includes/colors.kv
+
 #: import C kivy.utils.get_color_from_hex
 
-<Inventory@BoxLayout>:
+#:import MDTabbedPanel kivymd.tabs.MDTabbedPanel
+#:import MDTab kivymd.tabs.MDTab
+
 
 <SideButton@Button>:
     markup: True
@@ -77,3 +80,258 @@
                     text: '[size={}]Settings[/size]'.format(int(self.width/8))
 
     BoxLayout:
+        MDTabbedPanel:
+            tab_width: '200px'
+            MDTab:
+                name: "products"
+                text: "Products"
+                halign: 'center'
+                width: '100px'
+                BoxLayout:
+                    orientation: 'vertical'
+                    spacing: '3px'
+                    padding: '3px'
+                    BoxLayout:
+                        GridLayout:
+                            cols: 1
+                            size_hint_x: None
+                            width: '300px'
+                            spacing: '10px'
+                            padding: '10px'
+                            MDTextField:
+                                hint_text: 'Brand Name'
+                            MDTextField:
+                                hint_text: 'Generic Name'
+                            MDTextField:
+                                hint_text: 'Quantity Per Unit'
+                            MDTextField:
+                                hint_text: 'Unit Price'
+                            MDTextField:
+                                hint_text: 'Category'
+                            BoxLayout:
+                                size_hint_y: None
+                                height: '40px'
+                                MDIconButton:
+                                    icon: 'calendar'
+                                    on_release: root.products_date_pick()
+                                MDTextField:
+                                    id: products_date_label
+                                    hint_text: 'Expiry Date'
+                                    disabled: True
+
+                            MDTextField:
+                                hint_text: 'Status'
+                            BoxLayout:
+                                spacing: '3px'
+                                Button:
+                                    size_hint_y: None
+                                    height: '60px'
+                                    text: 'Add'
+                                    background_normal: ''
+                                    background_color: C(color_primary)
+                                Button:
+                                    size_hint_y: None
+                                    height: '60px'
+                                    text: 'delete'
+                                    background_normal: ''
+                                    background_color: C(danger)
+                        Button:
+                            text: 'Table'
+
+            MDTab:
+                name: "categories"
+                text: "Categories"
+                BoxLayout:
+                    orientation: 'vertical'
+                    spacing: '3px'
+                    padding: '3px'
+                    BoxLayout:
+                        GridLayout:
+                            cols: 1
+                            size_hint_x: None
+                            width: '300px'
+                            spacing: '10px'
+                            padding: '10px'
+                            MDTextField:
+                                hint_text: 'Name'
+                                helper_text: "Category Name Shoudn't Be Empty!"
+                                required: True
+                                helper_text_mode: "on_error"
+                            BoxLayout:
+                                spacing: '3px'
+                                Button:
+                                    size_hint_y: None
+                                    height: '60px'
+                                    text: 'Add'
+                                    background_normal: ''
+                                    background_color: C(color_primary)
+                                Button:
+                                    size_hint_y: None
+                                    height: '60px'
+                                    text: 'delete'
+                                    background_normal: ''
+                                    background_color: C(danger)
+                        Button:
+                            text: 'Table'
+            MDTab:
+                name: 'imports'
+                text: "Imports"
+                BoxLayout:
+                    orientation: 'vertical'
+                    spacing: '3px'
+                    padding: '3px'
+                    BoxLayout:
+                        GridLayout:
+                            cols: 1
+                            size_hint_x: None
+                            width: '300px'
+                            spacing: '10px'
+                            padding: '10px'
+                            MDTextField:
+                                hint_text: 'Receipt Number'
+                            BoxLayout:
+                                size_hint_y: None
+                                height: '40px'
+                                MDIconButton:
+                                    icon: 'calendar'
+                                    on_release: root.imports_date_pick()
+                                MDTextField:
+                                    id: imports_date_label
+                                    hint_text: 'Date'
+                                    disabled: True
+                            MDTextField:
+                                hint_text: 'Supplier Name'
+                            MDTextField:
+                                hint_text: 'Status'
+
+                        Button:
+                            text: 'Table'
+                    BoxLayout:
+                        GridLayout:
+                            cols: 1
+                            size_hint_x: None
+                            width: '300px'
+                            spacing: '10px'
+                            padding: '10px'
+                            MDTextField:
+                                hint_text: 'Import ID'
+                            MDTextField:
+                                hint_text: 'Product ID'
+                            MDTextField:
+                                hint_text: 'Quantity'
+                            MDTextField:
+                                hint_text: 'Unit Price'
+                            BoxLayout:
+                                spacing: '3px'
+                                Button:
+                                    size_hint_y: None
+                                    height: '60px'
+                                    text: 'Add'
+                                    background_normal: ''
+                                    background_color: C(color_primary)
+                                Button:
+                                    size_hint_y: None
+                                    height: '60px'
+                                    text: 'delete'
+                                    background_normal: ''
+                                    background_color: C(danger)
+                        Button:
+                            text: 'Table'
+            MDTab:
+                name: 'exports'
+                text: "Exports"
+                BoxLayout:
+                    orientation: 'vertical'
+                    spacing: '3px'
+                    padding: '3px'
+                    BoxLayout:
+                        GridLayout:
+                            cols: 1
+                            size_hint_x: None
+                            width: '300px'
+                            spacing: '10px'
+                            padding: '10px'
+                            BoxLayout:
+                                size_hint_y: None
+                                height: '40px'
+                                MDIconButton:
+                                    icon: 'calendar'
+                                    on_release: root.exports_date_pick()
+                                MDTextField:
+                                    id: exports_date_label
+                                    hint_text: 'Date'
+                                    disabled: True
+                            MDTextField:
+                                hint_text: 'Destination'
+                            MDTextField:
+                                hint_text: 'Status'
+
+                        Button:
+                            text: 'Table'
+                    BoxLayout:
+                        GridLayout:
+                            cols: 1
+                            size_hint_x: None
+                            width: '300px'
+                            spacing: '10px'
+                            padding: '10px'
+                            MDTextField:
+                                hint_text: 'Export ID'
+                            MDTextField:
+                                hint_text: 'Product ID'
+                            MDTextField:
+                                hint_text: 'Quantity'
+                            MDTextField:
+                                hint_text: 'Unit Price'
+                            BoxLayout:
+                                spacing: '3px'
+                                Button:
+                                    size_hint_y: None
+                                    height: '60px'
+                                    text: 'Add'
+                                    background_normal: ''
+                                    background_color: C(color_primary)
+                                Button:
+                                    size_hint_y: None
+                                    height: '60px'
+                                    text: 'delete'
+                                    background_normal: ''
+                                    background_color: C(danger)
+                        Button:
+                            text: 'Table'
+            MDTab:
+                name: 'suppliers'
+                text: "Suppliers"
+                BoxLayout:
+                    orientation: 'vertical'
+                    spacing: '3px'
+                    padding: '3px'
+                    BoxLayout:
+                        GridLayout:
+                            cols: 1
+                            size_hint_x: None
+                            width: '300px'
+                            spacing: '10px'
+                            padding: '10px'
+                            MDTextField:
+                                hint_text: 'Name'
+                            MDTextField:
+                                hint_text: 'Address'
+                            MDTextField:
+                                hint_text: 'Contact'
+                            BoxLayout:
+                                spacing: '3px'
+                                Button:
+                                    size_hint_y: None
+                                    height: '60px'
+                                    text: 'Add'
+                                    background_normal: ''
+                                    background_color: C(color_primary)
+                                Button:
+                                    size_hint_y: None
+                                    height: '60px'
+                                    text: 'delete'
+                                    background_normal: ''
+                                    background_color: C(danger)
+                        Button:
+                            text: 'Table'

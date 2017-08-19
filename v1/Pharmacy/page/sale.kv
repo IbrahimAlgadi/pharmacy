@@ -1,7 +1,10 @@
 #: include includes/colors.kv
 #: import C kivy.utils.get_color_from_hex
 
-<Sales@BoxLayout>:
+#:import MDTextField kivymd.textfields.MDTextField
+#:import MDLabel kivymd.label.MDLabel
+#:import MDIconButton kivymd.button.MDIconButton
+
 
 <SideButton@Button>:
     markup: True
@@ -77,3 +80,59 @@
                     text: '[size={}]Settings[/size]'.format(int(self.width/8))
 
     BoxLayout:
+        orientation: 'vertical'
+        spacing: '3px'
+        padding: '3px'
+        BoxLayout:
+            GridLayout:
+                cols: 1
+                size_hint_x: None
+                width: '300px'
+                spacing: '10px'
+                padding: '10px'
+                MDTextField:
+                    hint_text: 'ID'
+                BoxLayout:
+                    size_hint_y: None
+                    height: '40px'
+                    MDIconButton:
+                        icon: 'calendar'
+                        on_release: root.sale_date_pick()
+                    MDTextField:
+                        id: sale_date_picker_label
+                        hint_text: 'Date'
+                        disabled: True
+
+                MDTextField:
+                    hint_text: 'Status'
+            Button:
+                background_color: C(color_primary)
+				text: 'Table'
+        BoxLayout:
+            GridLayout:
+                cols: 1
+                size_hint_x: None
+                width: '300px'
+                spacing: '10px'
+                padding: '10px'
+                MDTextField:
+                    hint_text: 'Product'
+                MDTextField:
+                    hint_text: 'Quantity'
+                BoxLayout:
+                    spacing: '3px'
+                    Button:
+                        size_hint_y: None
+                        height: '60px'
+                        text: 'sell'
+                        background_normal: ''
+                        background_color: C(color_primary)
+                    Button:
+                        size_hint_y: None
+                        height: '60px'
+                        text: 'delete'
+                        background_normal: ''
+                        background_color: C(danger)
+            Button:
+                text: 'Table'
+				background_color: C(color_primary)
