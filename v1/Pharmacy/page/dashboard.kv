@@ -17,7 +17,7 @@
     BoxLayout:
         size_hint_x: None
         orientation: 'vertical'
-        width: '250px'
+        width: '100px'
         SideButton:
             id: dashboardButton
             BoxLayout:
@@ -26,10 +26,10 @@
                 size: self.parent.size
                 Label:
                     markup: True
-                    text: '[color={}][b][size={}][font=PICTO]7[/font][/b][/size][/color]'.format(sidebar_color,int(self.width/5))
+                    text: '[color={}][b][size={}][font=PICTO]7[/font][/b][/size][/color]'.format(sidebar_color,int(self.width/2))
                 Label:
                     markup: True
-                    text: '[color={}][size={}][b]Dashboard[/b][/size][/color]'.format(sidebar_color, int(self.width/8))
+                    text: '[color={}][size={}][b]Dashboard[/b][/size][/color]'.format(sidebar_color, int(self.width/6))
 
         Sep:
         SideButton:
@@ -43,10 +43,10 @@
                 size: self.parent.size
                 Label:
                     markup: True
-                    text: '[size={}][font=PICTO]6[/font][/size]'.format(int(self.width/5))
+                    text: '[size={}][font=PICTO]6[/font][/size]'.format(int(self.width/2))
                 Label:
                     markup: True
-                    text: '[size={}]Sales[/size]'.format(int(self.width/8))
+                    text: '[size={}]Sales[/size]'.format(int(self.width/6))
         Sep
         SideButton:
             on_press:
@@ -58,10 +58,10 @@
                 size: self.parent.size
                 Label:
                     markup: True
-                    text: '[size={}][font=PICTO]\[/font][/size]'.format(int(self.width/5))
+                    text: '[size={}][font=PICTO]\[/font][/size]'.format(int(self.width/2))
                 Label:
                     markup: True
-                    text: '[size={}]Inventory[/size]'.format(int(self.width/8))
+                    text: '[size={}]Inventory[/size]'.format(int(self.width/6))
         Sep
         SideButton:
             on_press:
@@ -73,9 +73,9 @@
                 size: self.parent.size
                 Label:
                     markup: True
-                    text: '[size={}][font=rap]Ñ[/font][/size]'.format(int(self.width/5))
+                    text: '[size={}][font=rap]Ñ[/font][/size]'.format(int(self.width/2))
                 Label:
                     markup: True
-                    text: '[size={}]Settings[/size]'.format(int(self.width/8))
+                    text: '[size={}]Settings[/size]'.format(int(self.width/6))
 
     BoxLayout:

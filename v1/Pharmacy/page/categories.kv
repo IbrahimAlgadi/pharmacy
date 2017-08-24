@@ -1,0 +1,16 @@
+<CategoriesTableHeader@GridLayout>:
+    cols: 9
+    size_hint_y: None
+    height: '90px'
+    canvas.before:
+        Color:
+            rgba: C('#455a64')
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    Head:
+        text: "[size=20][b]Id[/b][/size]"
+    Head:
+        text: "[size=20][b]Name[/b][/size]"
+    Head:
+        text: "[size=20][b]Options[/b][/size]"

@@ -1,10 +1,15 @@
 #: include includes/colors.kv
+#: include page/exports.kv
+#: include page/imports.kv
+#: include page/suppliers.kv
+#: include page/categories.kv
+#: include page/products.kv
 
 #: import C kivy.utils.get_color_from_hex
 
 #:import MDTabbedPanel kivymd.tabs.MDTabbedPanel
 #:import MDTab kivymd.tabs.MDTab
-
+#: import date datetime.date
 
 <SideButton@Button>:
     markup: True
@@ -15,11 +20,43 @@
     size_hint_y: None
     height: '3px'
 
+<Head@Label>:
+    size_hint_y: None
+    height: '40px'
+    text_size: self.size
+    padding_x: '5px'
+    markup: True
+    valign: 'middle'
+
+<DataLabel>:
+    text_size: self.size
+    valign: 'middle'
+    padding_x: '5px'
+
+<DataWidget>:
+    canvas.before:
+        Color:
+            rgba: C('#1976d2')
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<DataWidget2>:
+    canvas.before:
+        Color:
+            rgba: C('#2196f3')
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+
 <Inventory>:
+    layout_content_1: export_table1
+
     BoxLayout:
         size_hint_x: None
         orientation: 'vertical'
-        width: '250px'
+        width: '100px'
         SideButton:
             on_press:
                 root.parent.parent.transition.direction="right"
@@ -30,10 +67,10 @@
                 size: self.parent.size
                 Label:
                     markup: True
-                    text: '[size={}][font=PICTO]7[/font][/size]'.format(int(self.width/5))
+                    text: '[size={}][font=PICTO]7[/font][/size]'.format(int(self.width/2))
                 Label:
                     markup: True
-                    text: '[size={}]Dashboard[/size]'.format(int(self.width/8))
+                    text: '[size={}]Dashboard[/size]'.format(int(self.width/6))
 
         Sep:
         SideButton:
@@ -46,10 +83,10 @@
                 size: self.parent.size
                 Label:
                     markup: True
-                    text: '[size={}][font=PICTO]6[/font][/size]'.format(int(self.width/5))
+                    text: '[size={}][font=PICTO]6[/font][/size]'.format(int(self.width/2))
                 Label:
                     markup: True
-                    text: '[size={}]Sales[/size]'.format(int(self.width/8))
+                    text: '[size={}]Sales[/size]'.format(int(self.width/6))
         Sep
         SideButton:
             id: inventoryButton
@@ -59,10 +96,10 @@
                 size: self.parent.size
                 Label:
                     markup: True
-                    text: '[color={}][b][size={}][font=PICTO]\[/font][/size][/b][/color]'.format(sidebar_color,int(self.width/5))
+                    text: '[color={}][b][size={}][font=PICTO]\[/font][/size][/b][/color]'.format(sidebar_color,int(self.width/2))
                 Label:
                     markup: True
-                    text: '[color={}][size={}][b]Inventory[/b][/size][/color]'.format(sidebar_color,int(self.width/8))
+                    text: '[color={}][size={}][b]Inventory[/b][/size][/color]'.format(sidebar_color,int(self.width/6))
         Sep
         SideButton:
             on_press:
@@ -74,10 +111,10 @@
                 size: self.parent.size
                 Label:
                     markup: True
-                    text: '[size={}][font=rap]Ñ[/font][/size]'.format(int(self.width/5))
+                    text: '[size={}][font=rap]Ñ[/font][/size]'.format(int(self.width/2))
                 Label:
                     markup: True
-                    text: '[size={}]Settings[/size]'.format(int(self.width/8))
+                    text: '[size={}]Settings[/size]'.format(int(self.width/6))
 
     BoxLayout:
         MDTabbedPanel:
@@ -99,15 +136,30 @@
                             spacing: '10px'
                             padding: '10px'
                             MDTextField:
+                                id: product_brandname
                                 hint_text: 'Brand Name'
                             MDTextField:
+                                id: product_genericname
                                 hint_text: 'Generic Name'
                             MDTextField:
+                                id: product_quantityperunit
                                 hint_text: 'Quantity Per Unit'
                             MDTextField:
+                                id: product_unitprice
                                 hint_text: 'Unit Price'
-                            MDTextField:
-                                hint_text: 'Category'
+                            TextInputWithDropper:
+                                ButtonDropper:
+                                    id: product_category
+                                    text: 'Category'
+                                    size_hint: (None,None)
+                                    width: 150
+                                    height: '40px'
+                                    pos_hint: {'center_x':.5, 'center_y':.5}
+                                    on_release: self.call_the_drop(product_category_id)
+                                MDTextField:
+                                    id: product_category_id
+                                    hint_text: 'Category ID'
+                                    pos_hint: {'center_x':.5, 'center_y':.5}
                             BoxLayout:
                                 size_hint_y: None
                                 height: '40px'
@@ -117,26 +169,63 @@
                                 MDTextField:
                                     id: products_date_label
                                     hint_text: 'Expiry Date'
+                                    text: str(date.today())
                                     disabled: True
 
                             MDTextField:
+                                id: product_status
                                 hint_text: 'Status'
+                            Button:
+                                size_hint_y: None
+                                height: '60px'
+                                text: 'Add'
+                                background_normal: ''
+                                background_color: C(color_primary)
+                                on_release:
+                                    product_table.add_data(product_brandname.text, product_genericname.text, product_quantityperunit.text, product_unitprice.text, product_category_id.text, products_date_label.text, product_status.text)
+                                    product_brandname.text = product_genericname.text = product_quantityperunit.text = product_unitprice.text =  product_status.text = product_category_id.text = ''
+                                    product_category.text = 'Category'
+                                    products_date_label.text = str(date.today())
+                        BoxLayout:
+                            orientation: 'vertical'
+
+                            ProductsTableHeader:
+
                             BoxLayout:
-                                spacing: '3px'
-                                Button:
+                                orientation: 'vertical'
+                                ScrollView:
+                                    id: scroller
+                                    size_hint: 1, None
+                                    size: self.parent.width, self.parent.height
+                                    ProductsTable:
+                                        id: product_table
+                                        size_hint_y: None
+                                        size_hint_x: 1
+                                        cols: 1
+                                BoxLayout:
                                     size_hint_y: None
-                                    height: '60px'
-                                    text: 'Add'
-                                    background_normal: ''
-                                    background_color: C(color_primary)
-                                Button:
-                                    size_hint_y: None
-                                    height: '60px'
-                                    text: 'delete'
-                                    background_normal: ''
-                                    background_color: C(danger)
-                        Button:
-                            text: 'Table'
+                                    height: '40px'
+                                    padding: '3px'
+                                    Label:
+                                    MDIconButton:
+                                        icon: 'arrow-right'
+                                        id: product_next
+                                        on_release:
+                                            self.disabled, product_no.text = product_table.pagination_next(int(product_no.text)+1)
+                                            product_previous.disabled = False
+                                    MDLabel:
+                                        id: product_no
+                                        halign: 'center'
+                                        valign: 'middle'
+                                        text: '1'
+                                    MDIconButton:
+                                        icon: 'arrow-left'
+                                        text: 'previous'
+                                        id: product_previous
+                                        on_release:
+                                            self.disabled, product_no.text = product_table.pagination_prev(int(product_no.text)-1)
+                                            product_next.disabled = False
+                                    Label:
 
             MDTab:
                 name: "categories"
@@ -153,26 +242,61 @@
                             spacing: '10px'
                             padding: '10px'
                             MDTextField:
+                                id: category_name
                                 hint_text: 'Name'
                                 helper_text: "Category Name Shoudn't Be Empty!"
                                 required: True
                                 helper_text_mode: "on_error"
+                            Button:
+                                size_hint_y: None
+                                height: '60px'
+                                text: 'Add'
+                                background_normal: ''
+                                background_color: C(color_primary)
+                                on_release:
+                                    category_table.add_data(category_name.text)
+                                    category_name.text = ''
+
+                        BoxLayout:
+                            orientation: 'vertical'
+
+                            CategoriesTableHeader:
+
                             BoxLayout:
-                                spacing: '3px'
-                                Button:
+                                orientation: 'vertical'
+                                ScrollView:
+                                    id: scroller
+                                    size_hint: 1, None
+                                    size: self.parent.width, self.parent.height
+                                    CategoriesTable:
+                                        id: category_table
+                                        size_hint_y: None
+                                        size_hint_x: 1
+                                        cols: 1
+                                BoxLayout:
                                     size_hint_y: None
-                                    height: '60px'
-                                    text: 'Add'
-                                    background_normal: ''
-                                    background_color: C(color_primary)
-                                Button:
-                                    size_hint_y: None
-                                    height: '60px'
-                                    text: 'delete'
-                                    background_normal: ''
-                                    background_color: C(danger)
-                        Button:
-                            text: 'Table'
+                                    height: '40px'
+                                    padding: '3px'
+                                    Label:
+                                    MDIconButton:
+                                        icon: 'arrow-right'
+                                        id: category_next
+                                        on_release:
+                                            self.disabled, category_no.text = category_table.pagination_next(int(category_no.text)+1)
+                                            category_previous.disabled = False
+                                    MDLabel:
+                                        id: category_no
+                                        halign: 'center'
+                                        valign: 'middle'
+                                        text: '1'
+                                    MDIconButton:
+                                        icon: 'arrow-left'
+                                        text: 'previous'
+                                        id: category_previous
+                                        on_release:
+                                            self.disabled, category_no.text = category_table.pagination_prev(int(category_no.text)-1)
+                                            category_next.disabled = False
+                                    Label:
             MDTab:
                 name: 'imports'
                 text: "Imports"
@@ -187,58 +311,194 @@
                             width: '300px'
                             spacing: '10px'
                             padding: '10px'
-                            MDTextField:
-                                hint_text: 'Receipt Number'
-                            BoxLayout:
-                                size_hint_y: None
-                                height: '40px'
-                                MDIconButton:
-                                    icon: 'calendar'
-                                    on_release: root.imports_date_pick()
+                            GridLayout:
+                                cols: 2
                                 MDTextField:
-                                    id: imports_date_label
-                                    hint_text: 'Date'
-                                    disabled: True
+                                    id: import_receipt_number
+                                    hint_text: 'Receipt Number'
+                                BoxLayout:
+                                    size_hint_y: None
+                                    height: '40px'
+                                    MDIconButton:
+                                        icon: 'calendar'
+                                        on_release: root.imports_date_pick()
+                                    MDTextField:
+                                        id: imports_date_label
+                                        hint_text: 'Date'
+                                        text: str(date.today())
+                                        disabled: True
+                            #MDTextField:
+                            #    id: import_supplier_id
+                            #    hint_text: 'Supplier Name'
+                            TextInputWithDropper:
+                                SupplierButtonDropper:
+                                    id: import_supplier
+                                    text: 'Supplier'
+                                    size_hint: (None,None)
+                                    width: 150
+                                    height: '40px'
+                                    pos_hint: {'center_x':.5, 'center_y':.5}
+                                    on_release: self.call_the_drop(import_supplier_id)
+                                MDTextField:
+                                    id: import_supplier_id
+                                    hint_text: 'Supplier ID'
+                                    pos_hint: {'center_x':.5, 'center_y':.5}
                             MDTextField:
-                                hint_text: 'Supplier Name'
-                            MDTextField:
+                                id: import_status
                                 hint_text: 'Status'
+                            Button:
+                                size_hint_y: None
+                                height: '60px'
+                                text: 'Add'
+                                background_normal: ''
+                                background_color: C(color_primary)
+                                on_release:
+                                    import_table1.add_data(import_receipt_number.text, imports_date_label.text, import_supplier_id.text, import_status.text)
+                                    import_supplier.text = 'Supplier'
+                                    import_receipt_number.text = import_supplier_id.text = import_status.text = ''
+                                    imports_date_label.text = str(date.today())
 
-                        Button:
-                            text: 'Table'
+                        BoxLayout:
+                            orientation: 'vertical'
+                            ImportsTable1Header:
+
+                            BoxLayout:
+                                orientation: 'vertical'
+                                ScrollView:
+                                    id: scroller
+                                    size_hint: 1, None
+                                    size: self.parent.width, self.parent.height
+                                    ImportTable1:
+                                        id: import_table1
+                                        size_hint_y: None
+                                        size_hint_x: 1
+                                        cols: 1
+                                BoxLayout:
+                                    size_hint_y: None
+                                    height: '40px'
+                                    padding: '3px'
+                                    Label:
+                                    MDIconButton:
+                                        icon: 'arrow-right'
+                                        id: import_next
+                                        on_release:
+                                            self.disabled, import_table1_page_no.text = import_table1.pagination_next(int(import_table1_page_no.text)+1)
+                                            import_previous.disabled = False
+                                    MDLabel:
+                                        id: import_table1_page_no
+                                        halign: 'center'
+                                        valign: 'middle'
+                                        text: '1'
+                                    MDIconButton:
+                                        icon: 'arrow-left'
+                                        text: 'previous'
+                                        id: import_previous
+                                        on_release:
+                                            self.disabled, import_table1_page_no.text = import_table1.pagination_prev(int(import_table1_page_no.text)-1)
+                                            import_next.disabled = False
+                                    Label:
                     BoxLayout:
                         GridLayout:
                             cols: 1
                             size_hint_x: None
+                            padding_y: '100px'
                             width: '300px'
                             spacing: '10px'
                             padding: '10px'
-                            MDTextField:
-                                hint_text: 'Import ID'
-                            MDTextField:
-                                hint_text: 'Product ID'
-                            MDTextField:
-                                hint_text: 'Quantity'
-                            MDTextField:
-                                hint_text: 'Unit Price'
+                            #MDTextField:
+                            #        id: import_import_id
+                            #        hint_text: 'Import ID'
+                            #MDTextField:
+                            #    id: import_product_id
+                            #    hint_text: 'Product ID'
+                            GridLayout:
+                                cols: 1
+                                TextInputWithDropper:
+                                    ImportImportDetailsButtonDropper:
+                                        id: import_import_id
+                                        text: 'Import'
+                                        size_hint: (None,None)
+                                        width: 150
+                                        height: '40px'
+                                        pos_hint: {'center_x':.5, 'center_y':.5}
+                                        on_release: self.call_the_drop(import_import_id_text)
+                                    MDTextField:
+                                        id: import_import_id_text
+                                        hint_text: 'Import ID'
+                                        pos_hint: {'center_x':.5, 'center_y':.5}
+                                TextInputWithDropper:
+                                    ProductImportDetailsButtonDropper:
+                                        id: import_product_id_button
+                                        text: 'Product'
+                                        size_hint: (None,None)
+                                        width: 150
+                                        height: '40px'
+                                        pos_hint: {'center_x':.5, 'center_y':.5}
+                                        on_release: self.call_the_drop(import_product_id)
+                                    MDTextField:
+                                        id: import_product_id
+                                        hint_text: 'Product ID'
+                                        pos_hint: {'center_x':.5, 'center_y':.5}
+                            GridLayout:
+                                cols: 2
+                                MDTextField:
+                                    id: import_quantity
+                                    hint_text: 'Quantity'
+                                MDTextField:
+                                    id: import_unit_price
+                                    hint_text: 'Unit Price'
+                            Button:
+                                size_hint_y: None
+                                height: '60px'
+                                text: 'Add'
+                                background_normal: ''
+                                background_color: C(color_primary)
+                                on_release:
+                                    import_table2.add_data(import_import_id_text.text, import_product_id.text, import_quantity.text, import_unit_price.text)
+                                    import_import_id_text.text = import_product_id.text = import_quantity.text = import_unit_price.text = ''
+                                    import_import_id.text = 'Import'
+                                    import_product_id_button.text = 'Product'
+                        BoxLayout:
+                            orientation: 'vertical'
+                            ImportsTable2Header:
+
                             BoxLayout:
-                                spacing: '3px'
-                                Button:
+                                orientation: 'vertical'
+                                ScrollView:
+                                    id: scroller
+                                    size_hint: 1, None
+                                    size: self.parent.width, self.parent.height
+                                    ImportTable2:
+                                        id: import_table2
+                                        size_hint_y: None
+                                        size_hint_x: 1
+                                        cols: 1
+                                BoxLayout:
                                     size_hint_y: None
-                                    height: '60px'
-                                    text: 'Add'
-                                    background_normal: ''
-                                    background_color: C(color_primary)
-                                Button:
-                                    size_hint_y: None
-                                    height: '60px'
-                                    text: 'delete'
-                                    background_normal: ''
-                                    background_color: C(danger)
-                        Button:
-                            text: 'Table'
+                                    height: '40px'
+                                    padding: '3px'
+                                    Label:
+                                    MDIconButton:
+                                        icon: 'arrow-right'
+                                        id: import_details_next
+                                        on_release:
+                                            self.disabled, import_table2_page_no.text = import_table2.pagination_next(int(import_table2_page_no.text)+1)
+                                            import_details_previous.disabled = False
+                                    MDLabel:
+                                        id: import_table2_page_no
+                                        halign: 'center'
+                                        valign: 'middle'
+                                        text: '1'
+                                    MDIconButton:
+                                        icon: 'arrow-left'
+                                        text: 'previous'
+                                        id: import_details_previous
+                                        on_release:
+                                            self.disabled, import_table2_page_no.text = import_table2.pagination_prev(int(import_table2_page_no.text)-1)
+                                            import_details_next.disabled = False
+                                    Label:
             MDTab:
-                name: 'exports'
+                name: "exports"
                 text: "Exports"
                 BoxLayout:
                     orientation: 'vertical'
@@ -251,6 +511,9 @@
                             width: '300px'
                             spacing: '10px'
                             padding: '10px'
+                            Label:
+                                size_hint_y: None
+                                height: '1px'
                             BoxLayout:
                                 size_hint_y: None
                                 height: '40px'
@@ -260,14 +523,64 @@
                                 MDTextField:
                                     id: exports_date_label
                                     hint_text: 'Date'
+                                    text: str(date.today())
                                     disabled: True
                             MDTextField:
+                                id: export_destination
                                 hint_text: 'Destination'
                             MDTextField:
+                                id: export_status
                                 hint_text: 'Status'
+                            Button:
+                                size_hint_y: None
+                                height: '60px'
+                                text: 'Add'
+                                background_normal: ''
+                                background_color: C(color_primary)
+                                on_release:
+                                    export_table1.add_data(export_destination.text, exports_date_label.text, export_status.text)
+                                    export_destination.text = export_status.text = ''
+                                    exports_date_label.text = str(date.today())
+                        BoxLayout:
+                            orientation: 'vertical'
+                            ExportsTable1Header:
 
-                        Button:
-                            text: 'Table'
+                            BoxLayout:
+                                orientation: 'vertical'
+                                ScrollView:
+                                    id: scroller
+                                    size_hint: 1, None
+                                    size: self.parent.width, self.parent.height
+                                    ExportTable1:
+                                        id: export_table1
+                                        size_hint_y: None
+                                        size_hint_x: 1
+                                        cols: 1
+                                BoxLayout:
+                                    size_hint_y: None
+                                    height: '40px'
+                                    padding: '3px'
+                                    Label:
+                                    MDIconButton:
+                                        icon: 'arrow-right'
+                                        id: exports_next
+                                        on_release:
+                                            self.disabled, table1_page_no.text = export_table1.pagination_next(int(table1_page_no.text)+1)
+                                            exports_previous.disabled = False
+                                    MDLabel:
+                                        id: table1_page_no
+                                        halign: 'center'
+                                        valign: 'middle'
+                                        text: '1'
+                                    MDIconButton:
+                                        icon: 'arrow-left'
+                                        text: 'previous'
+                                        id: exports_previous
+                                        on_release:
+                                            self.disabled, table1_page_no.text = export_table1.pagination_prev(int(table1_page_no.text)-1)
+                                            exports_next.disabled = False
+                                    Label:
+
                     BoxLayout:
                         GridLayout:
                             cols: 1
@@ -275,30 +588,96 @@
                             width: '300px'
                             spacing: '10px'
                             padding: '10px'
-                            MDTextField:
-                                hint_text: 'Export ID'
-                            MDTextField:
-                                hint_text: 'Product ID'
-                            MDTextField:
-                                hint_text: 'Quantity'
-                            MDTextField:
-                                hint_text: 'Unit Price'
+                            #MDTextField:
+                            #    id: export_export_id
+                            #    hint_text: 'Export ID'
+                            #MDTextField:
+                            #    id: export_product_id
+                            #    hint_text: 'Product ID'
+                            TextInputWithDropper:
+                                ExportExportDetailsButtonDropper:
+                                    id: export_export_id
+                                    text: 'Export'
+                                    size_hint: (None,None)
+                                    width: 150
+                                    height: '40px'
+                                    pos_hint: {'center_x':.5, 'center_y':.5}
+                                    on_release: self.call_the_drop(export_export_id_text)
+                                MDTextField:
+                                    id: export_export_id_text
+                                    hint_text: 'Export ID'
+                                    pos_hint: {'center_x':.5, 'center_y':.5}
+                            TextInputWithDropper:
+                                ProductExportDetailsButtonDropper:
+                                    id: export_product_id_button
+                                    text: 'Product'
+                                    size_hint: (None,None)
+                                    width: 150
+                                    height: '40px'
+                                    pos_hint: {'center_x':.5, 'center_y':.5}
+                                    on_release: self.call_the_drop(export_product_id)
+                                MDTextField:
+                                    id: export_product_id
+                                    hint_text: 'Product ID'
+                                    pos_hint: {'center_x':.5, 'center_y':.5}
+                            GridLayout:
+                                cols: 2
+                                MDTextField:
+                                    id: export_quantity
+                                    hint_text: 'Quantity'
+                                MDTextField:
+                                    id: export_unitprice
+                                    hint_text: 'Unit Price'
+                            Button:
+                                size_hint_y: None
+                                height: '60px'
+                                text: 'Add'
+                                background_normal: ''
+                                background_color: C(color_primary)
+                                on_release:
+                                    export_table2.add_data(export_export_id_text.text, export_product_id.text, export_quantity.text, export_unitprice.text)
+                                    export_export_id_text.text= export_product_id.text= export_quantity.text= export_unitprice.text = ''
+                                    export_export_id = 'Export'
+                                    export_product_id_button = 'Product'
+                        BoxLayout:
+                            orientation: 'vertical'
+                            ExportsTable2Header:
+
                             BoxLayout:
-                                spacing: '3px'
-                                Button:
+                                orientation: 'vertical'
+                                ScrollView:
+                                    id: scroller
+                                    size_hint: 1, None
+                                    size: self.parent.width, self.parent.height
+                                    ExportTable2:
+                                        id: export_table2
+                                        size_hint_y: None
+                                        size_hint_x: 1
+                                        cols: 1
+                                BoxLayout:
                                     size_hint_y: None
-                                    height: '60px'
-                                    text: 'Add'
-                                    background_normal: ''
-                                    background_color: C(color_primary)
-                                Button:
-                                    size_hint_y: None
-                                    height: '60px'
-                                    text: 'delete'
-                                    background_normal: ''
-                                    background_color: C(danger)
-                        Button:
-                            text: 'Table'
+                                    height: '40px'
+                                    padding: '3px'
+                                    Label:
+                                    MDIconButton:
+                                        icon: 'arrow-right'
+                                        id: export_details_next
+                                        on_release:
+                                            self.disabled, table2_page_no.text = export_table2.pagination_next(int(table2_page_no.text)+1)
+                                            export_details_previous.disabled = False
+                                    MDLabel:
+                                        id: table2_page_no
+                                        halign: 'center'
+                                        valign: 'middle'
+                                        text: '1'
+                                    MDIconButton:
+                                        icon: 'arrow-left'
+                                        text: 'previous'
+                                        id: export_details_previous
+                                        on_release:
+                                            self.disabled, table2_page_no.text = export_table2.pagination_prev(int(table2_page_no.text)-1)
+                                            export_details_next.disabled = False
+                                    Label:
             MDTab:
                 name: 'suppliers'
                 text: "Suppliers"
@@ -314,24 +693,60 @@
                             spacing: '10px'
                             padding: '10px'
                             MDTextField:
+                                id: supplier_name
                                 hint_text: 'Name'
                             MDTextField:
+                                id: supplier_address
                                 hint_text: 'Address'
                             MDTextField:
+                                id: supplier_contact
                                 hint_text: 'Contact'
+                            Button:
+                                size_hint_y: None
+                                height: '60px'
+                                text: 'Add'
+                                background_normal: ''
+                                background_color: C(color_primary)
+                                on_release:
+                                    supplier_table.add_data(supplier_name.text, supplier_address.text, supplier_contact.text)
+                                    supplier_name.text = supplier_address.text = supplier_contact.text = ''
+                        BoxLayout:
+                            orientation: 'vertical'
+
+                            SupplierTable1Header:
+
                             BoxLayout:
-                                spacing: '3px'
-                                Button:
+                                orientation: 'vertical'
+                                ScrollView:
+                                    id: scroller
+                                    size_hint: 1, None
+                                    size: self.parent.width, self.parent.height
+                                    SupplierTable:
+                                        id: supplier_table
+                                        size_hint_y: None
+                                        size_hint_x: 1
+                                        cols: 1
+                                BoxLayout:
                                     size_hint_y: None
-                                    height: '60px'
-                                    text: 'Add'
-                                    background_normal: ''
-                                    background_color: C(color_primary)
-                                Button:
-                                    size_hint_y: None
-                                    height: '60px'
-                                    text: 'delete'
-                                    background_normal: ''
-                                    background_color: C(danger)
-                        Button:
-                            text: 'Table'
+                                    height: '40px'
+                                    padding: '3px'
+                                    Label:
+                                    MDIconButton:
+                                        icon: 'arrow-right'
+                                        id: supplier_next
+                                        on_release:
+                                            self.disabled, supplier_no.text = supplier_table.pagination_next(int(supplier_no.text)+1)
+                                            supplier_previous.disabled = False
+                                    MDLabel:
+                                        id: supplier_no
+                                        halign: 'center'
+                                        valign: 'middle'
+                                        text: '1'
+                                    MDIconButton:
+                                        icon: 'arrow-left'
+                                        text: 'previous'
+                                        id: supplier_previous
+                                        on_release:
+                                            self.disabled, supplier_no.text = supplier_table.pagination_prev(int(supplier_no.text)-1)
+                                            supplier_next.disabled = False
+                                    Label:

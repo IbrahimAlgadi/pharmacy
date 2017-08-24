@@ -5,18 +5,36 @@ kivy.require('1.10.0') # replace with your current kivy version !
 
 from kivy.app import App
 from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.gridlayout import GridLayout
 from kivy.core.window import Window
+from kivy.clock import Clock
 from kivy.uix.button import Button
 from kivy.utils import get_color_from_hex as C
 from kivy.uix.textinput import TextInput
+from kivy.uix.label import Label
 from kivy.core.text import LabelBase
 from kivy.uix.screenmanager import ScreenManager
 from kivy.metrics import dp
 from kivy.properties import ObjectProperty
+from kivy.properties import NumericProperty
+import math
 
 # Using Material Design Widgets
 from kivymd.theming import ThemeManager
+from kivymd.button import MDIconButton
+from kivymd.label import MDLabel
+from kivymd.dialog import MDDialog
+from kivymd.textfields import MDTextField
 from kivymd.date_picker import MDDatePicker
+from kivymd.snackbar import Snackbar
+
+# Inventory
+from inventory import *
+
+# TODO
+"""
+The Problem Of Import Details And Export Details
+"""
 
 Window.maximize()
 
@@ -25,30 +43,7 @@ Config.set('graphics', 'multisamples', '0')
 Config.set('graphics', 'resizable', '0')
 Config.set('input', 'mouse', 'mouse,disable_multitouch')
 
-class Inventory(BoxLayout):
-    previous_date = ObjectProperty()
-
-    def products_date_pick(self):
-        MDDatePicker(self.set_products_date).open()
-
-    def set_products_date(self, date_obj):
-        self.previous_date = date_obj
-        self.ids.products_date_label.text = str(date_obj)
-
-    def imports_date_pick(self):
-        MDDatePicker(self.set_imports_date).open()
-
-    def set_imports_date(self, date_obj):
-        self.previous_date = date_obj
-        self.ids.imports_date_label.text = str(date_obj)
-
-    def exports_date_pick(self):
-        MDDatePicker(self.set_exports_date).open()
-
-    def set_exports_date(self, date_obj):
-        self.previous_date = date_obj
-        self.ids.exports_date_label.text = str(date_obj)
-
+# SALES PART
 class Sales(BoxLayout):
     previous_date = ObjectProperty()
 
@@ -59,6 +54,8 @@ class Sales(BoxLayout):
         self.previous_date = date_obj
         self.ids.sale_date_picker_label.text = str(date_obj)
 
+
+
 class Manager(ScreenManager):
     pass
 
@@ -66,6 +63,11 @@ class MainPageButton(Button):
     pass
 
 class MainLayout(BoxLayout):
+    layout_content = ObjectProperty(None)
+    def __init__(self, **kwargs):
+        super(MainLayout, self).__init__(**kwargs)
+
+
     def return_to_page(self, page):
         self.ids.manager.current = page
 

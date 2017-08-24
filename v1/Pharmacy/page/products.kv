@@ -1,0 +1,30 @@
+<ProductsTableHeader@GridLayout>:
+    cols: 9
+    size_hint_y: None
+    height: '90px'
+    canvas.before:
+        Color:
+            rgba: C('#455a64')
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    Head:
+        text: "[size=12][b]Id[/b][/size]"
+
+    Head:
+        text: "[size=12][b]Brand Name[/b][/size]"
+    Head:
+        text: "[size=12][b]Generic Name[/b][/size]"
+    Head:
+        text: "[size=12][b]Quantity Per Unit[/b][/size]"
+    Head:
+        text: "[size=12][b]Unit Price[/b][/size]"
+    Head:
+        text: "[size=12][b]Category[/b][/size]"
+    Head:
+        text: "[size=12][b]Expiry Date[/b][/size]"
+    Head:
+        text: "[size=12][b]Status[/b][/size]"
+
+    Head:
+        text: "[size=12][b]Options[/b][/size]"

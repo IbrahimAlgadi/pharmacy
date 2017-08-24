@@ -1,4 +1,5 @@
 import MySQLdb
+import _mysql_exceptions
 
 class Database():
     user = "root"
@@ -60,7 +61,8 @@ class Database():
     def delete(self, id):
         self.cur.execute("DELETE FROM {} WHERE id=%s".format(self.table), [id])
         self.db.commit()
-        return self.db.affected_rows()
+
+
 
     def counterecords(self):
         q = "SELECT COUNT(*) FROM {}".format(self.table)

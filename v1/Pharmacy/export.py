@@ -12,22 +12,27 @@ class Export():
 
     def get_exports(self):
         self.export = self._db.getrecords()
-        print self.export
+        json = dict()
+        for data in self.export:
+            id = data.get('id')
+            json["%s"%id] = data
+        # print json
+        return json
 
     def get_export(self):
         self.export = self._db.getrecord()
-        print self.export
+        return self.export
 
-    def insert_exports(self):
+    def insert_export(self):
         data = dict()
         data['date'] = self.date
         data['status'] = self.status
         data['destination'] = self.destination
         self._db.insert(data)
 
-    def update_exports(self):
+    def update_export(self):
         data = dict()
-        print self.id
+        print "updated",self.id
         if self.id != None:
             data['date'] = self.date
             data['status'] = self.status
@@ -37,11 +42,12 @@ class Export():
             print "You Need To Set the id"
 
     def delete_export(self):
+        print "ID = ",self.id, " is deleted"
         self._db.delete(self.id)
 
     def count_export(self):
         self.export = self._db.counterecords()
-        print self.export
+        return self.export
 
 if __name__ == '__main__':
     exp = Export()
@@ -53,5 +59,11 @@ if __name__ == '__main__':
     # exp.update_exports()
     # exp.delete_export()
     # exp.count_export()
-    # exp.get_exports()
+    #for key in exp.get_exports():
+    #    print "id +> ",exp.get_exports().get(key)['status']
+    # print exp.count_export()
+    #exp.status = "on"
+    #exp.date = date.today()
+    #exp.destination = "Safari"
+    #exp.insert_export()
 
