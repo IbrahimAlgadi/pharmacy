@@ -54,7 +54,7 @@ class ExportTable1(GridLayout):
         except KeyError:
             print "Key Not Found"
         except _mysql_exceptions.IntegrityError:
-            Snackbar(text=str("You Connot Delete This Record")).show()
+            Snackbar(text=str("You Cannot Delete This Record")).show()
 
     def call_load(self):
         Clock.schedule_once(self.load_data)
