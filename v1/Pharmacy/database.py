@@ -7,6 +7,7 @@ class Database():
     db = "i3m_pharmacy"
     host = "localhost"
     port = 3306
+
     def __init__(self, table):
         self.table = table
         self.db = MySQLdb.connect(host=self.host, port=self.port, user=self.user, passwd=self.passwd, db=self.db)
@@ -61,7 +62,6 @@ class Database():
     def delete(self, id):
         self.cur.execute("DELETE FROM {} WHERE id=%s".format(self.table), [id])
         self.db.commit()
-
 
 
     def counterecords(self):

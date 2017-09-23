@@ -1,0 +1,1175 @@
+#: include includes/colors.kv
+#: include page/exports.kv
+#: include page/imports.kv
+#: include page/suppliers.kv
+#: include page/categories.kv
+#: include page/products.kv
+
+#: import C kivy.utils.get_color_from_hex
+
+#:import MDTabbedPanel kivymd.tabs.MDTabbedPanel
+#:import MDTab kivymd.tabs.MDTab
+#:import MDCheckbox kivymd.selectioncontrols.MDCheckbox
+#: import date datetime.date
+
+<SideButton@Button>:
+    markup: True
+    background_color: C(sidebar_color)
+    background_normal: ''
+
+<Sep@Label>:
+    size_hint_y: None
+    height: '3px'
+
+<Head@Label>:
+    size_hint_y: None
+    height: '40px'
+    text_size: self.size
+    padding_x: '5px'
+    markup: True
+    valign: 'middle'
+
+<DataLabel>:
+    text_size: self.size
+    font_size: '12px'
+    valign: 'middle'
+    padding_x: '5px'
+
+<DataWidget>:
+    canvas.before:
+        Color:
+            rgba: C('#1976d2')
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<DataWidget2>:
+    canvas.before:
+        Color:
+            rgba: C('#2196f3')
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+
+<Search>:
+    BoxLayout:
+        size_hint_x: None
+        orientation: 'vertical'
+        width: '100px'
+        SideButton:
+            on_press:
+                root.parent.parent.transition.direction="right"
+                root.parent.parent.current = 'dashboard'
+            BoxLayout:
+                orientation: 'vertical'
+                pos: self.parent.pos
+                size: self.parent.size
+                Label:
+                    markup: True
+                    text: '[size={}][font=PICTO]7[/font][/size]'.format(int(self.width/2))
+                Label:
+                    markup: True
+                    text: '[size={}]Dashboard[/size]'.format(int(self.width/6))
+
+        Sep:
+        SideButton:
+            on_press:
+                root.parent.parent.transition.direction="right"
+                root.parent.parent.current = 'sales'
+            BoxLayout:
+
+                orientation: 'vertical'
+                pos: self.parent.pos
+                size: self.parent.size
+                Label:
+                    markup: True
+                    text: '[size={}][font=PICTO]6[/font][/size]'.format(int(self.width/2))
+                Label:
+                    markup: True
+                    text: '[size={}]Sales[/size]'.format(int(self.width/6))
+        Sep
+        SideButton:
+            on_press:
+                root.parent.parent.transition.direction="right"
+                root.parent.parent.current = 'inventory'
+            BoxLayout:
+                orientation: 'vertical'
+                pos: self.parent.pos
+                size: self.parent.size
+                Label:
+                    markup: True
+                    text: '[size={}][font=PICTO]\[/font][/size]'.format(int(self.width/2))
+                Label:
+                    markup: True
+                    text: '[size={}]Inventory[/size]'.format(int(self.width/6))
+        Sep
+        SideButton:
+            id: searchButton
+            BoxLayout:
+                orientation: 'vertical'
+                pos: self.parent.pos
+                size: self.parent.size
+                Label:
+                    markup: True
+                    text: '[color=%s][b][size=%d]%s[/size][/b][/color]'%(sidebar_color,int(self.width/2), IconFonts().icon('ion-android-search'))
+                Label:
+                    markup: True
+                    text: '[color={}][size={}][b]Search[/b][/size][/color]'.format(sidebar_color,int(self.width/6))
+        Sep
+        SideButton:
+            on_press:
+                root.parent.parent.transition.direction="left"
+                root.parent.parent.current = 'settings'
+            BoxLayout:
+                orientation: 'vertical'
+                pos: self.parent.pos
+                size: self.parent.size
+                Label:
+                    markup: True
+                    text: '[size={}][font=rap]Ñ[/font][/size]'.format(int(self.width/2))
+                Label:
+                    markup: True
+                    text: '[size={}]Settings[/size]'.format(int(self.width/6))
+
+    BoxLayout:
+        MDTabbedPanel:
+            tab_width: '200px'
+            MDTab:
+                name: "products"
+                text: "Products"
+                halign: 'center'
+                width: '100px'
+                BoxLayout:
+                    orientation: 'vertical'
+                    spacing: '3px'
+                    padding: '3px'
+                    BoxLayout:
+                        GridLayout:
+                            cols: 1
+                            size_hint_x: None
+                            width: '300px'
+                            spacing: '10px'
+                            padding: '10px'
+                            GridLayout:
+                                cols: 2
+                                MDCheckbox:
+                                    id: brandname_controll
+                                    size_hint:    None, None
+                                    size:        dp(48), dp(48)
+                                    pos_hint:    {'center_x': 0.5, 'center_y': 0.5}
+                                    on_state:
+                                        product_search_brandname.disabled = False if product_search_brandname.disabled == True else True
+                                        if self.state == 'normal': product_search_brandname.text = ''
+                                        #product_search_table.activate_brandname(self.state)
+                                MDTextField:
+                                    id: product_search_brandname
+                                    hint_text: 'Brand Name'
+                                    disabled: True
+                                    on_text:
+                                        product_search_table.filter(product_search_brandname.text, product_search_genericname.text, product_search_quantityperunit.text, product_search_unitprice.text, product_search_category_id.text, products_search_date_label.text, product_search_status.text)
+
+                                MDCheckbox:
+                                    id: genericname_controll
+                                    size_hint:    None, None
+                                    size:        dp(48), dp(48)
+                                    pos_hint:    {'center_x': 0.5, 'center_y': 0.5}
+                                    on_state:
+                                        product_search_genericname.disabled = False if product_search_genericname.disabled == True else True
+                                        if self.state == 'normal': product_search_genericname.text = ''
+                                        product_search_table.activate_genericname(self.state)
+                                MDTextField:
+                                    id: product_search_genericname
+                                    hint_text: 'Generic Name'
+                                    disabled: True
+                                    on_text:
+                                        if genericname_controll.state == 'down': product_search_table.filter(product_search_brandname.text, product_search_genericname.text, product_search_quantityperunit.text, product_search_unitprice.text, product_search_category_id.text, products_search_date_label.text, product_search_status.text)
+
+                                MDCheckbox:
+                                    id: quantityperunit_controll
+                                    size_hint:    None, None
+                                    size:        dp(48), dp(48)
+                                    pos_hint:    {'center_x': 0.5, 'center_y': 0.5}
+                                    on_state:
+                                        product_search_quantityperunit.disabled = False if product_search_quantityperunit.disabled == True else True
+                                        if self.state == 'normal': product_search_quantityperunit.text = ''
+                                        product_search_table.activate_quantityperunit(self.state)
+                                MDTextField:
+                                    id: product_search_quantityperunit
+                                    hint_text: 'Quantity Per Unit'
+                                    disabled: True
+                                    on_text:
+                                        if quantityperunit_controll.state == 'down': product_search_table.filter(product_search_brandname.text, product_search_genericname.text, product_search_quantityperunit.text, product_search_unitprice.text, product_search_category_id.text, products_search_date_label.text, product_search_status.text)
+
+                                MDCheckbox:
+                                    id: unitprice_controll
+                                    size_hint:    None, None
+                                    size:        dp(48), dp(48)
+                                    pos_hint:    {'center_x': 0.5, 'center_y': 0.5}
+                                    on_state:
+                                        product_search_unitprice.disabled = False if product_search_unitprice.disabled == True else True
+                                        if self.state == 'normal': product_search_unitprice.text = ''
+                                        product_search_table.activate_unitprice(self.state)
+                                MDTextField:
+                                    id: product_search_unitprice
+                                    hint_text: 'Unit Price'
+                                    disabled: True
+                                    on_text:
+                                        if unitprice_controll.state == 'down': product_search_table.filter(product_search_brandname.text, product_search_genericname.text, product_search_quantityperunit.text, product_search_unitprice.text, product_search_category_id.text, products_search_date_label.text, product_search_status.text)
+
+                            GridLayout:
+                                cols: 2
+                                MDCheckbox:
+                                    id: product_search_category_controll
+                                    size_hint:    None, None
+                                    size:        dp(48), dp(48)
+                                    pos_hint:    {'center_x': 0.5, 'center_y': 0.5}
+                                    on_state:
+                                        product_search_category.disabled = False if product_search_category.disabled == True else True
+                                        if self.state == 'normal': product_search_category.text = 'Category'
+                                        if self.state == 'normal': product_search_category_id.text = ''
+                                        product_search_table.activate_category_id(self.state)
+                                BoxLayout:
+                                    orientation: 'vertical'
+                                    Label:
+                                    TextInputWithDropper:
+                                        ButtonDropper:
+                                            id: product_search_category
+                                            text: 'Category'
+                                            size_hint: (None,None)
+                                            width: 150
+                                            height: '40px'
+                                            pos_hint: {'center_x':.5, 'center_y':.5}
+                                            on_release: self.call_the_drop(product_search_category_id)
+                                            disabled: True
+                                        MDTextField:
+                                            id: product_search_category_id
+                                            hint_text: 'CatID'
+                                            pos_hint: {'center_x':.5, 'center_y':.5}
+                                            disabled: True
+                                            on_text:
+                                                if product_search_category_controll.state == 'down': product_search_table.filter(product_search_brandname.text, product_search_genericname.text, product_search_quantityperunit.text, product_search_unitprice.text, product_search_category_id.text, products_search_date_label.text, product_search_status.text)
+                            GridLayout:
+                                cols: 2
+                                MDCheckbox:
+                                    id: products_search_date_label_controll
+                                    size_hint:    None, None
+                                    size:        dp(48), dp(48)
+                                    pos_hint:    {'center_x': 0.5, 'center_y': 0.5}
+                                    on_state:
+                                        products_search_date_label_icon.disabled = False if products_search_date_label_icon.disabled == True else True
+                                        if self.state == 'normal': products_search_date_label.text = str(date.today())
+                                        product_search_table.activate_expiry_date(self.state)
+                                BoxLayout:
+                                    size_hint_y: None
+                                    height: '40px'
+                                    MDIconButton:
+                                        icon: 'calendar'
+                                        id: products_search_date_label_icon
+                                        on_release: root.products_date_pick()
+                                        disabled: True
+                                    MDTextField:
+                                        id: products_search_date_label
+                                        hint_text: 'Expiry Date'
+                                        text: str(date.today())
+                                        disabled: True
+                                        on_text:
+                                            if products_search_date_label_controll.state == 'down': product_search_table.filter(product_search_brandname.text, product_search_genericname.text, product_search_quantityperunit.text, product_search_unitprice.text, product_search_category_id.text, products_search_date_label.text, product_search_status.text)
+
+                                MDCheckbox:
+                                    id: product_search_status_controll
+                                    size_hint:    None, None
+                                    size:        dp(48), dp(48)
+                                    pos_hint:    {'center_x': 0.5, 'center_y': 0.5}
+                                    on_state:
+                                        product_search_status.disabled = False if product_search_status.disabled == True else True
+                                        if self.state == 'normal': product_search_status.text = ''
+                                        product_search_table.activate_status(self.state)
+                                MDTextField:
+                                    id: product_search_status
+                                    hint_text: 'Status'
+                                    disabled: True
+                                    on_text:
+                                        if product_search_status_controll.state == 'down': product_search_table.filter(product_search_brandname.text, product_search_genericname.text, product_search_quantityperunit.text, product_search_unitprice.text, product_search_category_id.text, products_search_date_label.text, product_search_status.text)
+                            GridLayout:
+                                cols: 2
+                                spacing: '30px'
+                                MDFloatingActionButton:
+                                    id: float_act_btn
+                                    text_color: C('#FFFFFF')
+                                    icon: 'file-pdf'
+                                    # opposite_colors: True
+                                    md_bg_color: C(danger)
+                                    elevation_normal: 8
+                                    pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+                                    on_release:
+                                        product_search_table.make_report()
+                                MDFloatingActionButton:
+                                    id: float_act_btn
+                                    text_color: C('#FFFFFF')
+                                    icon: 'file-excel'
+                                    # opposite_colors: True
+                                    md_bg_color: C(green_color)
+                                    elevation_normal: 8
+                                    pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+
+                        GridLayout:
+                            cols: 1
+
+                            GridLayout:
+                                cols: 1
+                                size_hint: 1, None
+                                height: '90px'
+                                ProductsTableHeader:
+
+                            BoxLayout:
+                                orientation: 'vertical'
+                                ScrollView:
+                                    id: scroller
+                                    size_hint: 1, None
+                                    size: self.parent.width, self.parent.height
+                                    ProductsSearchTable:
+                                        id: product_search_table
+                                        size_hint_y: None
+                                        size_hint_x: 1
+                                        cols: 1
+                                BoxLayout:
+                                    size_hint_y: None
+                                    height: '40px'
+                                    padding: '3px'
+                                    Label:
+                                    MDIconButton:
+                                        icon: 'arrow-right'
+                                        id: product_search_next
+                                        on_release:
+                                            self.disabled, product_search_no.text = product_search_table.pagination_next(int(product_search_no.text)+1)
+                                            product_search_previous.disabled = False
+                                    MDLabel:
+                                        id: product_search_no
+                                        halign: 'center'
+                                        valign: 'middle'
+                                        text: '1'
+                                    MDIconButton:
+                                        icon: 'arrow-left'
+                                        text: 'previous'
+                                        id: product_search_previous
+                                        on_release:
+                                            self.disabled, product_search_no.text = product_search_table.pagination_prev(int(product_search_no.text)-1)
+                                            product_search_next.disabled = False
+                                    Label:
+
+            MDTab:
+                name: "categories"
+                text: "Categories"
+                BoxLayout:
+                    orientation: 'vertical'
+                    spacing: '3px'
+                    padding: '3px'
+                    BoxLayout:
+                        GridLayout:
+                            cols: 1
+                            size_hint_x: None
+                            width: '300px'
+                            spacing: '10px'
+                            padding: '10px'
+                            GridLayout:
+                                cols: 2
+                                MDCheckbox:
+                                    size_hint:    None, None
+                                    size:        dp(48), dp(48)
+                                    pos_hint:    {'center_x': 0.5, 'center_y': 0.5}
+                                    on_state:
+                                        category_search_name.disabled = False if category_search_name.disabled == True else True
+                                        if self.state != 'active': category_search_name.text = ''
+                                MDTextField:
+                                    id: category_search_name
+                                    hint_text: 'Name'
+                                    disabled: True
+                                    on_text: category_search_table.filter(category_search_name.text)
+
+                            # Use This Icon To Trigger Printing Event
+                            GridLayout:
+                                cols: 2
+                                spacing: '30px'
+                                MDFloatingActionButton:
+                                    id: float_act_btn
+                                    text_color: C('#FFFFFF')
+                                    icon: 'file-pdf'
+                                    # opposite_colors: True
+                                    md_bg_color: C(danger)
+                                    elevation_normal: 8
+                                    pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+                                    on_release:
+                                        category_search_table.make_report()
+                                MDFloatingActionButton:
+                                    id: float_act_btn
+                                    text_color: C('#FFFFFF')
+                                    icon: 'file-excel'
+                                    # opposite_colors: True
+                                    md_bg_color: C(green_color)
+                                    elevation_normal: 8
+                                    pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+
+                        BoxLayout:
+                            orientation: 'vertical'
+
+                            CategoriesTableHeader:
+
+                            BoxLayout:
+                                orientation: 'vertical'
+                                ScrollView:
+                                    id: scroller
+                                    size_hint: 1, None
+                                    size: self.parent.width, self.parent.height
+                                    CategoriesSearchTable:
+                                        id: category_search_table
+                                        size_hint_y: None
+                                        size_hint_x: 1
+                                        cols: 1
+                                BoxLayout:
+                                    size_hint_y: None
+                                    height: '40px'
+                                    padding: '3px'
+                                    Label:
+                                    MDIconButton:
+                                        icon: 'arrow-right'
+                                        id: category_search_next
+                                        on_release:
+                                            self.disabled, category_search_no.text = category_search_table.pagination_next(int(category_search_no.text)+1)
+                                            category_search_previous.disabled = False
+                                    MDLabel:
+                                        id: category_search_no
+                                        halign: 'center'
+                                        valign: 'middle'
+                                        text: '1'
+                                    MDIconButton:
+                                        icon: 'arrow-left'
+                                        text: 'previous'
+                                        id: category_search_previous
+                                        on_release:
+                                            self.disabled, category_search_no.text = category_search_table.pagination_prev(int(category_search_no.text)-1)
+                                            category_search_next.disabled = False
+                                    Label:
+            MDTab:
+                name: 'imports'
+                text: "Imports"
+                BoxLayout:
+                    orientation: 'vertical'
+                    spacing: '3px'
+                    padding: '3px'
+                    BoxLayout:
+                        GridLayout:
+                            cols: 1
+                            size_hint_x: None
+                            width: '300px'
+                            spacing: '10px'
+                            padding: '10px'
+                            GridLayout:
+                                cols: 2
+
+                                MDCheckbox:
+                                    id: import_receipt_search_number_controll
+                                    size_hint:    None, None
+                                    size:        dp(48), dp(48)
+                                    pos_hint:    {'center_x': 0.5, 'center_y': 0.5}
+                                    on_state:
+                                        import_receipt_search_number.disabled = False if import_receipt_search_number.disabled == True else True
+                                        if self.state == 'normal': import_receipt_search_number.text = ''
+                                        # import_search_table1.activate_address(self.state)
+                                MDTextField:
+                                    id: import_receipt_search_number
+                                    hint_text: 'Receipt Number'
+                                    disabled: True
+                                    on_text:
+                                        import_search_table1.filter(import_receipt_search_number.text, imports_search_date_label.text, import_supplier_search_id.text, import_search_status.text)
+
+                                MDCheckbox:
+                                    id: imports_search_date_button_controll
+                                    size_hint:    None, None
+                                    size:        dp(48), dp(48)
+                                    pos_hint:    {'center_x': 0.5, 'center_y': 0.5}
+                                    on_state:
+                                        imports_search_date_button.disabled = False if imports_search_date_button.disabled == True else True
+                                        if self.state == 'normal': imports_search_date_label.text = str(date.today())
+                                        import_search_table1.activate_date(self.state)
+                                BoxLayout:
+                                    size_hint_y: None
+                                    height: '40px'
+                                    MDIconButton:
+                                        id: imports_search_date_button
+                                        icon: 'calendar'
+                                        disabled: True
+                                        on_release: root.imports_date_pick()
+                                    MDTextField:
+                                        id: imports_search_date_label
+                                        hint_text: 'Date'
+                                        text: str(date.today())
+                                        disabled: True
+                                        on_text:
+                                            if imports_search_date_button_controll.state == 'down': import_search_table1.filter(import_receipt_search_number.text, imports_search_date_label.text, import_supplier_search_id.text, import_search_status.text)
+
+                                MDCheckbox:
+                                    id: import_search_supplier_controll
+                                    size_hint:    None, None
+                                    size:        dp(48), dp(48)
+                                    pos_hint:    {'center_x': 0.5, 'center_y': 0.5}
+                                    on_state:
+                                        import_search_supplier.disabled = False if import_search_supplier.disabled == True else True
+                                        if self.state == 'normal': import_search_supplier.text = 'Supplier'
+                                        import_search_table1.activate_supplier_id(self.state)
+                                BoxLayout:
+                                    orientation: 'vertical'
+                                    Label:
+                                    TextInputWithDropper:
+                                        SupplierButtonDropper:
+                                            id: import_search_supplier
+                                            text: 'Supplier'
+                                            disabled: True
+                                            size_hint: (None,None)
+                                            width: 150
+                                            height: '40px'
+                                            pos_hint: {'center_x':.5, 'center_y':.5}
+                                            on_release: self.call_the_drop(import_supplier_search_id)
+                                        MDTextField:
+                                            id: import_supplier_search_id
+                                            hint_text: 'SupID'
+                                            disabled: True
+                                            pos_hint: {'center_x':.5, 'center_y':.5}
+                                            on_text:
+                                                if import_search_supplier_controll.state == 'down': import_search_table1.filter(import_receipt_search_number.text, imports_search_date_label.text, import_supplier_search_id.text, import_search_status.text)
+
+                                MDCheckbox:
+                                    id: import_search_status_controll
+                                    size_hint:    None, None
+                                    size:        dp(48), dp(48)
+                                    pos_hint:    {'center_x': 0.5, 'center_y': 0.5}
+                                    on_state:
+                                        import_search_status.disabled = False if import_search_status.disabled == True else True
+                                        if self.state == 'normal': import_search_status.text = ''
+                                        import_search_table1.activate_status(self.state)
+                                MDTextField:
+                                    id: import_search_status
+                                    hint_text: 'Status'
+                                    disabled: True
+                                    on_text:
+                                        if import_search_status_controll.state == 'down': import_search_table1.filter(import_receipt_search_number.text, imports_search_date_label.text, import_supplier_search_id.text, import_search_status.text)
+
+                        BoxLayout:
+                            orientation: 'vertical'
+                            ImportsTable1Header:
+
+                            BoxLayout:
+                                orientation: 'vertical'
+                                ScrollView:
+                                    id: scroller
+                                    size_hint: 1, None
+                                    size: self.parent.width, self.parent.height
+                                    ImportSearchTable1:
+                                        id: import_search_table1
+                                        size_hint_y: None
+                                        size_hint_x: 1
+                                        cols: 1
+                                BoxLayout:
+                                    size_hint_y: None
+                                    height: '40px'
+                                    padding: '3px'
+                                    Label:
+                                    MDIconButton:
+                                        icon: 'arrow-right'
+                                        id: import_search_next
+                                        on_release:
+                                            self.disabled, import_search_table1_page_no.text = import_search_table1.pagination_next(int(import_search_table1_page_no.text)+1)
+                                            import_search_previous.disabled = False
+                                    MDLabel:
+                                        id: import_search_table1_page_no
+                                        halign: 'center'
+                                        valign: 'middle'
+                                        text: '1'
+                                    MDIconButton:
+                                        icon: 'arrow-left'
+                                        text: 'previous'
+                                        id: import_search_previous
+                                        on_release:
+                                            self.disabled, import_search_table1_page_no.text = import_search_table1.pagination_prev(int(import_search_table1_page_no.text)-1)
+                                            import_search_next.disabled = False
+                                    Label:
+                    BoxLayout:
+                        GridLayout:
+                            cols: 1
+                            size_hint_x: None
+                            padding_y: '100px'
+                            width: '300px'
+                            spacing: '10px'
+                            padding: '10px'
+                            GridLayout:
+                                cols: 1
+                                GridLayout:
+                                    cols: 2
+                                    MDCheckbox:
+                                        id: import_import_search_id_controll
+                                        size_hint:    None, None
+                                        size:        dp(48), dp(48)
+                                        pos_hint:    {'center_x': 0.5, 'center_y': 0.5}
+                                        on_state:
+                                            import_import_search_id.disabled = False if import_import_search_id.disabled == True else True
+                                            import_product_id_search_button_controll.disabled = False if import_product_id_search_button_controll.disabled == True else True
+                                            import_search_quantity_controll.disabled = False if import_search_quantity_controll.disabled == True else True
+                                            import_search_unit_price_controll.disabled = False if import_search_unit_price_controll.disabled == True else True
+                                            if self.state == 'normal': import_import_search_id.text = 'Import'
+                                            if self.state == 'normal': import_import_search_id_text.text = ''
+                                            import_search_table2.activate_import_id(self.state)
+                                    TextInputWithDropper:
+                                        ImportImportDetailsButtonDropper:
+                                            id: import_import_search_id
+                                            text: 'Import'
+                                            size_hint: (None,None)
+                                            width: 150
+                                            height: '40px'
+                                            pos_hint: {'center_x':.5, 'center_y':.5}
+                                            disabled: True
+                                            on_release: self.call_the_drop(import_import_search_id_text)
+                                        MDTextField:
+                                            id: import_import_search_id_text
+                                            hint_text: 'ImpID'
+                                            pos_hint: {'center_x':.5, 'center_y':.5}
+                                            disabled: True
+                                            on_text:
+                                                import_search_table2.filter(import_import_search_id_text.text, import_product_search_id.text, import_search_quantity.text, import_search_unit_price.text)
+
+                                    MDCheckbox:
+                                        id: import_product_id_search_button_controll
+                                        size_hint:    None, None
+                                        size:        dp(48), dp(48)
+                                        pos_hint:    {'center_x': 0.5, 'center_y': 0.5}
+                                        disabled: True
+                                        on_state:
+                                            import_product_id_search_button.disabled = False if import_product_id_search_button.disabled == True else True
+                                            if self.state == 'normal': import_product_id_search_button.text = 'Product'
+                                            if self.state == 'normal': import_product_search_id.text = ''
+                                            import_search_table2.activate_product_id(self.state)
+                                    TextInputWithDropper:
+                                        ProductImportDetailsButtonDropper:
+                                            id: import_product_id_search_button
+                                            text: 'Product'
+                                            size_hint: (None,None)
+                                            width: 150
+                                            height: '40px'
+                                            disabled: True
+                                            pos_hint: {'center_x':.5, 'center_y':.5}
+                                            on_release: self.call_the_drop(import_product_search_id)
+                                        MDTextField:
+                                            id: import_product_search_id
+                                            hint_text: 'ProID'
+                                            pos_hint: {'center_x':.5, 'center_y':.5}
+                                            disabled: True
+                                            on_text:
+                                                if import_product_id_search_button_controll.state == 'down': import_search_table2.filter(import_import_search_id_text.text, import_product_search_id.text, import_search_quantity.text, import_search_unit_price.text)
+
+                            GridLayout:
+                                cols: 4
+                                MDCheckbox:
+                                    id: import_search_quantity_controll
+                                    size_hint:    None, None
+                                    size:        dp(48), dp(48)
+                                    pos_hint:    {'center_x': 0.5, 'center_y': 0.5}
+                                    disabled: True
+                                    on_state:
+                                        import_search_quantity.disabled = False if import_search_quantity.disabled == True else True
+                                        if self.state == 'normal': import_search_quantity.text = ''
+                                        import_search_table2.activate_quantity(self.state)
+                                MDTextField:
+                                    id: import_search_quantity
+                                    hint_text: 'Quantity'
+                                    disabled: True
+                                    on_text:
+                                        if import_search_quantity_controll.state == 'down': import_search_table2.filter(import_import_search_id_text.text, import_product_search_id.text, import_search_quantity.text, import_search_unit_price.text)
+
+                                MDCheckbox:
+                                    id: import_search_unit_price_controll
+                                    size_hint:    None, None
+                                    size:        dp(48), dp(48)
+                                    pos_hint:    {'center_x': 0.5, 'center_y': 0.5}
+                                    disabled: True
+                                    on_state:
+                                        import_search_unit_price.disabled = False if import_search_unit_price.disabled == True else True
+                                        if self.state == 'normal': import_search_unit_price.text = ''
+                                        import_search_table2.activate_unitprice(self.state)
+                                MDTextField:
+                                    id: import_search_unit_price
+                                    hint_text: 'Unit Price'
+                                    disabled: True
+                                    on_text:
+                                        if import_search_unit_price_controll.state == 'down': import_search_table2.filter(import_import_search_id_text.text, import_product_search_id.text, import_search_quantity.text, import_search_unit_price.text)
+
+                            GridLayout:
+                                cols: 2
+                                spacing: '30px'
+                                MDFloatingActionButton:
+                                    id: float_act_btn
+                                    text_color: C('#FFFFFF')
+                                    icon: 'file-pdf'
+                                    # opposite_colors: True
+                                    md_bg_color: C(danger)
+                                    elevation_normal: 8
+                                    pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+                                    # on_release:
+                                MDFloatingActionButton:
+                                    id: float_act_btn
+                                    text_color: C('#FFFFFF')
+                                    icon: 'file-excel'
+                                    # opposite_colors: True
+                                    md_bg_color: C(green_color)
+                                    elevation_normal: 8
+                                    pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+
+                        BoxLayout:
+                            orientation: 'vertical'
+                            ImportsTable2Header:
+
+                            BoxLayout:
+                                orientation: 'vertical'
+                                ScrollView:
+                                    id: scroller
+                                    size_hint: 1, None
+                                    size: self.parent.width, self.parent.height
+                                    ImportSearchTable2:
+                                        id: import_search_table2
+                                        size_hint_y: None
+                                        size_hint_x: 1
+                                        cols: 1
+                                BoxLayout:
+                                    size_hint_y: None
+                                    height: '40px'
+                                    padding: '3px'
+                                    Label:
+                                    MDIconButton:
+                                        icon: 'arrow-right'
+                                        id: import_details_search_next
+                                        on_release:
+                                            self.disabled, import_search_table2_page_no.text = import_search_table2.pagination_next(int(import_search_table2_page_no.text)+1)
+                                            import_details_search_previous.disabled = False
+                                    MDLabel:
+                                        id: import_search_table2_page_no
+                                        halign: 'center'
+                                        valign: 'middle'
+                                        text: '1'
+                                    MDIconButton:
+                                        icon: 'arrow-left'
+                                        text: 'previous'
+                                        id: import_details_search_previous
+                                        on_release:
+                                            self.disabled, import_search_table2_page_no.text = import_search_table2.pagination_prev(int(import_search_table2_page_no.text)-1)
+                                            import_details_search_next.disabled = False
+                                    Label:
+            MDTab:
+                name: "exports"
+                text: "Exports"
+                BoxLayout:
+                    orientation: 'vertical'
+                    spacing: '3px'
+                    padding: '3px'
+                    BoxLayout:
+                        GridLayout:
+                            cols: 1
+                            size_hint_x: None
+                            width: '300px'
+                            spacing: '10px'
+                            padding: '10px'
+                            Label:
+                                size_hint_y: None
+                                height: '1px'
+                            GridLayout:
+                                cols: 2
+                                MDCheckbox:
+                                    id: exports_search_date_label_button_controll
+                                    size_hint:    None, None
+                                    size:        dp(48), dp(48)
+                                    pos_hint:    {'center_x': 0.5, 'center_y': 0.5}
+                                    on_state:
+                                        exports_search_date_label_button.disabled = False if exports_search_date_label_button.disabled == True else True
+                                        if self.state == 'normal': import_search_unit_price.text = ''
+                                        export_search_table1.activate_export_date(self.state)
+                                BoxLayout:
+                                    size_hint_y: None
+                                    height: '40px'
+                                    MDIconButton:
+                                        icon: 'calendar'
+                                        id: exports_search_date_label_button
+                                        on_release: root.exports_date_pick()
+                                        disabled: True
+                                    MDTextField:
+                                        id: exports_search_date_label
+                                        hint_text: 'Date'
+                                        text: str(date.today())
+                                        disabled: True
+                                        on_text:
+                                            if exports_search_date_label_button_controll.state == 'down': export_search_table1.filter(export_search_destination.text, exports_search_date_label.text, export_search_status.text)
+                                MDCheckbox:
+                                    id: export_search_destination_controll
+                                    size_hint:    None, None
+                                    size:        dp(48), dp(48)
+                                    pos_hint:    {'center_x': 0.5, 'center_y': 0.5}
+                                    on_state:
+                                        export_search_destination.disabled = False if export_search_destination.disabled == True else True
+                                        if self.state == 'normal': export_search_destination.text = ''
+                                        # import_search_table2.activate_unitprice(self.state)
+                                MDTextField:
+                                    id: export_search_destination
+                                    hint_text: 'Destination'
+                                    disabled: True
+                                    on_text:
+                                        export_search_table1.filter(export_search_destination.text, exports_search_date_label.text, export_search_status.text)
+
+                                MDCheckbox:
+                                    id: export_search_status_controll
+                                    size_hint:    None, None
+                                    size:        dp(48), dp(48)
+                                    pos_hint:    {'center_x': 0.5, 'center_y': 0.5}
+                                    on_state:
+                                        export_search_status.disabled = False if export_search_status.disabled == True else True
+                                        if self.state == 'normal': export_search_status.text = ''
+                                        export_search_table1.activate_status(self.state)
+                                MDTextField:
+                                    id: export_search_status
+                                    hint_text: 'Status'
+                                    disabled: True
+                                    on_text:
+                                        if export_search_status_controll.state == 'down': export_search_table1.filter(export_search_destination.text, exports_search_date_label.text, export_search_status.text)
+
+
+                        BoxLayout:
+                            orientation: 'vertical'
+                            ExportsTable1Header:
+
+                            BoxLayout:
+                                orientation: 'vertical'
+                                ScrollView:
+                                    id: scroller
+                                    size_hint: 1, None
+                                    size: self.parent.width, self.parent.height
+                                    ExportSearchTable1:
+                                        id: export_search_table1
+                                        size_hint_y: None
+                                        size_hint_x: 1
+                                        cols: 1
+                                BoxLayout:
+                                    size_hint_y: None
+                                    height: '40px'
+                                    padding: '3px'
+                                    Label:
+                                    MDIconButton:
+                                        icon: 'arrow-right'
+                                        id: exports_search_next
+                                        on_release:
+                                            self.disabled, table1_search_page_no.text = export_search_table1.pagination_next(int(table1_search_page_no.text)+1)
+                                            exports_search_previous.disabled = False
+                                    MDLabel:
+                                        id: table1_search_page_no
+                                        halign: 'center'
+                                        valign: 'middle'
+                                        text: '1'
+                                    MDIconButton:
+                                        icon: 'arrow-left'
+                                        text: 'previous'
+                                        id: exports_search_previous
+                                        on_release:
+                                            self.disabled, table1_search_page_no.text = export_search_table1.pagination_prev(int(table1_search_page_no.text)-1)
+                                            exports_search_next.disabled = False
+                                    Label:
+
+                    BoxLayout:
+                        GridLayout:
+                            cols: 1
+                            size_hint_x: None
+                            width: '300px'
+                            spacing: '10px'
+                            padding: '10px'
+
+                            GridLayout:
+                                cols: 2
+                                MDCheckbox:
+                                    id: export_search_export_id_controll
+                                    size_hint:    None, None
+                                    size:        dp(48), dp(48)
+                                    pos_hint:    {'center_x': 0.5, 'center_y': 0.5}
+                                    on_state:
+                                        export_search_export_id.disabled = False if export_search_export_id.disabled == True else True
+                                        export_search_product_id_button_controll.disabled = False if export_search_product_id_button_controll.disabled == True else True
+                                        export_search_unitprice_controll.disabled = False if export_search_unitprice_controll.disabled == True else True
+                                        export_search_quantity_controll.disabled = False if export_search_quantity_controll.disabled == True else True
+                                        if self.state == 'normal': export_search_export_id.text = 'Export'
+                                        if self.state == 'normal': export_search_export_id_text.text = ''
+                                        export_search_table2.activate_export_id(self.state)
+                                BoxLayout:
+                                    orientation: 'vertical'
+                                    Label:
+                                    TextInputWithDropper:
+                                        ExportExportDetailsButtonDropper:
+                                            id: export_search_export_id
+                                            text: 'Export'
+                                            size_hint: (None,None)
+                                            width: 150
+                                            disabled: True
+                                            height: '40px'
+                                            pos_hint: {'center_x':.5, 'center_y':.5}
+                                            on_release: self.call_the_drop(export_search_export_id_text)
+                                        MDTextField:
+                                            id: export_search_export_id_text
+                                            hint_text: 'ExpID'
+                                            pos_hint: {'center_x':.5, 'center_y':.5}
+                                            disabled: True
+                                            on_text:
+                                                export_search_table2.filter(export_search_export_id_text.text, export_search_product_id.text, export_search_quantity.text, export_search_unitprice.text)
+
+                                MDCheckbox:
+                                    id: export_search_product_id_button_controll
+                                    size_hint:    None, None
+                                    size:        dp(48), dp(48)
+                                    disabled: True
+                                    pos_hint:    {'center_x': 0.5, 'center_y': 0.5}
+                                    on_state:
+                                        export_search_product_id_button.disabled = False if export_search_product_id_button.disabled == True else True
+                                        if self.state == 'normal': export_search_product_id_button.text = 'Product'
+                                        if self.state == 'normal': export_search_product_id.text = ''
+                                        export_search_table2.activate_product_id(self.state)
+                                BoxLayout:
+                                    orientation: 'vertical'
+                                    Label:
+                                    TextInputWithDropper:
+                                        ProductExportDetailsButtonDropper:
+                                            id: export_search_product_id_button
+                                            text: 'Product'
+                                            size_hint: (None,None)
+                                            width: 150
+                                            height: '40px'
+                                            disabled: True
+                                            pos_hint: {'center_x':.5, 'center_y':.5}
+                                            on_release: self.call_the_drop(export_search_product_id)
+                                        MDTextField:
+                                            id: export_search_product_id
+                                            hint_text: 'ProID'
+                                            pos_hint: {'center_x':.5, 'center_y':.5}
+                                            disabled: True
+                                            on_text:
+                                                if export_search_product_id_button_controll.state == 'down': export_search_table2.filter(export_search_export_id_text.text, export_search_product_id.text, export_search_quantity.text, export_search_unitprice.text)
+
+                            GridLayout:
+                                cols: 4
+                                MDCheckbox:
+                                    id: export_search_quantity_controll
+                                    size_hint:    None, None
+                                    size:        dp(48), dp(48)
+                                    disabled: True
+                                    pos_hint:    {'center_x': 0.5, 'center_y': 0.5}
+                                    on_state:
+                                        export_search_quantity.disabled = False if export_search_quantity.disabled == True else True
+                                        if self.state == 'normal': export_search_quantity.text = ''
+                                        export_search_table2.activate_quantity(self.state)
+                                MDTextField:
+                                    id: export_search_quantity
+                                    hint_text: 'Quantity'
+                                    disabled: True
+                                    on_text:
+                                        if export_search_quantity_controll.state == 'down': export_search_table2.filter(export_search_export_id_text.text, export_search_product_id.text, export_search_quantity.text, export_search_unitprice.text)
+
+                                MDCheckbox:
+                                    id: export_search_unitprice_controll
+                                    size_hint:    None, None
+                                    disabled: True
+                                    size:        dp(48), dp(48)
+                                    pos_hint:    {'center_x': 0.5, 'center_y': 0.5}
+                                    on_state:
+                                        export_search_unitprice.disabled = False if export_search_unitprice.disabled == True else True
+                                        if self.state == 'normal': export_search_unitprice.text = ''
+                                        export_search_table2.activate_unitprice(self.state)
+                                MDTextField:
+                                    id: export_search_unitprice
+                                    hint_text: 'Unit Price'
+                                    disabled: True
+                                    on_text:
+                                        if export_search_unitprice_controll.state == 'down': export_search_table2.filter(export_search_export_id_text.text, export_search_product_id.text, export_search_quantity.text, export_search_unitprice.text)
+
+                            GridLayout:
+                                cols: 2
+                                spacing: '30px'
+                                MDFloatingActionButton:
+                                    id: float_act_btn
+                                    text_color: C('#FFFFFF')
+                                    icon: 'file-pdf'
+                                    # opposite_colors: True
+                                    md_bg_color: C(danger)
+                                    elevation_normal: 8
+                                    pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+                                    # on_release:
+                                MDFloatingActionButton:
+                                    id: float_act_btn
+                                    text_color: C('#FFFFFF')
+                                    icon: 'file-excel'
+                                    # opposite_colors: True
+                                    md_bg_color: C(green_color)
+                                    elevation_normal: 8
+                                    pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+
+                        BoxLayout:
+                            orientation: 'vertical'
+                            ExportsTable2Header:
+
+                            BoxLayout:
+                                orientation: 'vertical'
+                                ScrollView:
+                                    id: scroller
+                                    size_hint: 1, None
+                                    size: self.parent.width, self.parent.height
+                                    ExportSearchTable2:
+                                        id: export_search_table2
+                                        size_hint_y: None
+                                        size_hint_x: 1
+                                        cols: 1
+                                BoxLayout:
+                                    size_hint_y: None
+                                    height: '40px'
+                                    padding: '3px'
+                                    Label:
+                                    MDIconButton:
+                                        icon: 'arrow-right'
+                                        id: export_search_details_next
+                                        on_release:
+                                            self.disabled, table2_search_page_no.text = export_search_table2.pagination_next(int(table2_search_page_no.text)+1)
+                                            export_search_details_previous.disabled = False
+                                    MDLabel:
+                                        id: table2_search_page_no
+                                        halign: 'center'
+                                        valign: 'middle'
+                                        text: '1'
+                                    MDIconButton:
+                                        icon: 'arrow-left'
+                                        text: 'previous'
+                                        id: export_search_details_previous
+                                        on_release:
+                                            self.disabled, table2_search_page_no.text = export_search_table2.pagination_prev(int(table2_search_page_no.text)-1)
+                                            export_search_details_next.disabled = False
+                                    Label:
+            MDTab:
+                name: 'suppliers'
+                text: "Suppliers"
+                BoxLayout:
+                    orientation: 'vertical'
+                    spacing: '3px'
+                    padding: '3px'
+                    BoxLayout:
+                        GridLayout:
+                            cols: 1
+                            size_hint_x: None
+                            width: '300px'
+                            spacing: '10px'
+                            padding: '10px'
+
+                            GridLayout:
+                                cols: 2
+                                MDCheckbox:
+                                    id: supplier_search_name_controll
+                                    size_hint:    None, None
+                                    size:        dp(48), dp(48)
+                                    pos_hint:    {'center_x': 0.5, 'center_y': 0.5}
+                                    on_state:
+                                        supplier_search_name.disabled = False if supplier_search_name.disabled == True else True
+                                        if self.state == 'normal': supplier_search_name.text = ''
+                                        # supplier_search_table.activate_address(self.state)
+                                MDTextField:
+                                    id: supplier_search_name
+                                    hint_text: 'Name'
+                                    disabled: True
+                                    on_text:
+                                        supplier_search_table.filter(supplier_search_name.text, supplier_search_address.text, supplier_search_contact.text)
+                                MDCheckbox:
+                                    id: address_controll
+                                    size_hint:    None, None
+                                    size:        dp(48), dp(48)
+                                    pos_hint:    {'center_x': 0.5, 'center_y': 0.5}
+                                    on_state:
+                                        supplier_search_address.disabled = False if supplier_search_address.disabled == True else True
+                                        if self.state == 'normal': supplier_search_address.text = ''
+                                        supplier_search_table.activate_address(self.state)
+                                MDTextField:
+                                    id: supplier_search_address
+                                    hint_text: 'Address'
+                                    disabled: True
+                                    on_text:
+                                        if address_controll.state == 'down': supplier_search_table.filter(supplier_search_name.text, supplier_search_address.text, supplier_search_contact.text)
+                                MDCheckbox:
+                                    id: contact_controll
+                                    size_hint:    None, None
+                                    size:        dp(48), dp(48)
+                                    pos_hint:    {'center_x': 0.5, 'center_y': 0.5}
+                                    on_state:
+                                        supplier_search_contact.disabled = False if supplier_search_contact.disabled == True else True
+                                        if self.state == 'down': supplier_search_contact.text = ''
+                                        supplier_search_table.activate_contact(self.state)
+                                MDTextField:
+                                    id: supplier_search_contact
+                                    hint_text: 'Contact'
+                                    disabled: True
+                                    on_text:
+                                        if contact_controll.state == 'down': supplier_search_table.filter(supplier_search_name.text, supplier_search_address.text, supplier_search_contact.text)
+                            GridLayout:
+                                cols: 2
+                                spacing: '30px'
+                                MDFloatingActionButton:
+                                    id: float_act_btn
+                                    text_color: C('#FFFFFF')
+                                    icon: 'file-pdf'
+                                    # opposite_colors: True
+                                    md_bg_color: C(danger)
+                                    elevation_normal: 8
+                                    pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+                                    on_release:
+                                        supplier_search_table.make_report()
+                                MDFloatingActionButton:
+                                    id: float_act_btn
+                                    text_color: C('#FFFFFF')
+                                    icon: 'file-excel'
+                                    # opposite_colors: True
+                                    md_bg_color: C(green_color)
+                                    elevation_normal: 8
+                                    pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+
+                        BoxLayout:
+                            orientation: 'vertical'
+
+                            SupplierTable1Header:
+
+                            BoxLayout:
+                                orientation: 'vertical'
+                                ScrollView:
+                                    id: scroller
+                                    size_hint: 1, None
+                                    size: self.parent.width, self.parent.height
+                                    SupplierSearchTable:
+                                        id: supplier_search_table
+                                        size_hint_y: None
+                                        size_hint_x: 1
+                                        cols: 1
+                                BoxLayout:
+                                    size_hint_y: None
+                                    height: '40px'
+                                    padding: '3px'
+                                    Label:
+                                    MDIconButton:
+                                        icon: 'arrow-right'
+                                        id: supplier_search_next
+                                        on_release:
+                                            self.disabled, supplier_search_no.text = supplier_search_table.pagination_next(int(supplier_search_no.text)+1)
+                                            supplier_search_previous.disabled = False
+                                    MDLabel:
+                                        id: supplier_search_no
+                                        halign: 'center'
+                                        valign: 'middle'
+                                        text: '1'
+                                    MDIconButton:
+                                        icon: 'arrow-left'
+                                        text: 'previous'
+                                        id: supplier_search_previous
+                                        on_release:
+                                            self.disabled, supplier_search_no.text = supplier_search_table.pagination_prev(int(supplier_search_no.text)-1)
+                                            supplier_search_next.disabled = False
+                                    Label:

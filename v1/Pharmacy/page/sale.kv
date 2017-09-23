@@ -4,7 +4,7 @@
 #:import MDTextField kivymd.textfields.MDTextField
 #:import MDLabel kivymd.label.MDLabel
 #:import MDIconButton kivymd.button.MDIconButton
-
+#:import date datetime.date
 
 <SideButton@Button>:
     markup: True
@@ -91,21 +91,35 @@
                 width: '300px'
                 spacing: '10px'
                 padding: '10px'
-                MDTextField:
-                    hint_text: 'ID'
                 BoxLayout:
                     size_hint_y: None
-                    height: '40px'
-                    MDIconButton:
-                        icon: 'calendar'
-                        on_release: root.sale_date_pick()
+                    height: '50px'
+                    #MDIconButton:
+                    #    icon: 'calendar'
+                    #    on_release: root.sale_date_pick()
+
                     MDTextField:
                         id: sale_date_picker_label
                         hint_text: 'Date'
+                        text: str(date.today())
                         disabled: True
-
                 MDTextField:
-                    hint_text: 'Status'
+                    id: sales_submitted_by
+                    hint_text: 'Submitted By'
+                    text: "Hema"
+                    disabled: True
+                #MDTextField:
+                #    id: sales_status
+                #    hint_text: 'Status'
+                MDFloatingActionButton:
+                    id: float_act_btn
+                    text_color: C('#FFFFFF')
+                    icon: 'plus'
+                    # opposite_colors: True
+                    md_bg_color: C(color_primary)
+                    elevation_normal: 8
+                    pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+
             Button:
                 background_color: C(color_primary)
 				text: 'Table'
@@ -117,23 +131,34 @@
                 spacing: '10px'
                 padding: '10px'
                 MDTextField:
-                    hint_text: 'Product'
+                    id: sales_barcode
+                    hint_text: 'Barcode'
                 MDTextField:
+                    id: sales_voucher_product_id
+                    hint_text: 'Product'
+                    disables: True
+                MDTextField:
+                    id: sales_voucher_product_quantity
                     hint_text: 'Quantity'
-                BoxLayout:
-                    spacing: '3px'
-                    Button:
-                        size_hint_y: None
-                        height: '60px'
-                        text: 'sell'
-                        background_normal: ''
-                        background_color: C(color_primary)
-                    Button:
-                        size_hint_y: None
-                        height: '60px'
-                        text: 'delete'
-                        background_normal: ''
-                        background_color: C(danger)
+                GridLayout:
+                    cols: 2
+                    spacing: '30px'
+                    MDFloatingActionButton:
+                        id: float_act_btn
+                        text_color: C('#FFFFFF')
+                        icon: 'cash-multiple'
+                        # opposite_colors: True
+                        md_bg_color: C(green_color)
+                        elevation_normal: 8
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+                    MDFloatingActionButton:
+                        id: float_act_btn
+                        text_color: C('#FFFFFF')
+                        icon: 'delete-forever' # 'close'
+                        # opposite_colors: True
+                        md_bg_color: C(danger)
+                        elevation_normal: 8
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.2}
             Button:
                 text: 'Table'
 				background_color: C(color_primary)

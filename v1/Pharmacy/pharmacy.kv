@@ -3,9 +3,12 @@
 #: include page/sale.kv
 #: include page/setting.kv
 #: include page/inventory.kv
+#: include page/search.kv
 #: include page/dashboard.kv
 
 #: import C kivy.utils.get_color_from_hex
+#: import IconFonts iconfonts.IconFonts
+
 <Manager>
 
 <MainPageButton>:
@@ -30,26 +33,24 @@
             name: 'main'
 
             GridLayout:
-                cols: 2
+                cols: 3
                 spacing: 10
                 padding: 100
                 MainPageButton:
                     on_press:
                         manager.transition.direction = 'left'
                         manager.current = 'dashboard'
-                    # text: 5*' '+'[size={}][font=PICON]S[/font][/size]\n[size={}]Main[/size]'.format(int(self.width/5), int(self.width/8))
                     BoxLayout:
                         orientation: 'vertical'
                         pos: self.parent.pos
                         size: self.parent.size
                         Label:
                             markup: True
-                            text: '[size={}][font=PICTO]7[/font][/size]'.format(int(self.width/5))
+                            text: '[size=%d]%s[/size]'%(int(self.width/5), IconFonts().icon('ion-ios-speedometer-outline') ) #, font_name='fontawesome'))
                         Label:
                             markup: True
                             text: '[size={}]Dashboard[/size]'.format(int(self.width/8))
                 MainPageButton:
-                    # text: 5*' '+'[size={}][font=PICTO]6[/font][/size]\n[size={}]Sales[/size]'.format(int(self.width/5),int(self.width/8))
                     on_press:
                         manager.transition.direction = 'left'
                         manager.current = 'sales'
@@ -59,7 +60,7 @@
                         size: self.parent.size
                         Label:
                             markup: True
-                            text: '[size={}][font=PICTO]6[/font][/size]'.format(int(self.width/5))
+                            text: '[size=%d]%s[/size]'%(int(self.width/5), IconFonts().icon('fa-line-chart', font_name='fontawesome'))
                         Label:
                             markup: True
                             text: '[size={}]Sales[/size]'.format(int(self.width/8))
@@ -67,7 +68,6 @@
                     on_press:
                         manager.transition.direction = 'left'
                         manager.current = 'inventory'
-                    #text: 17*' '+'[size={}][font=PICTO]\[/font][/size]\n[size={}]Inventory[/size]'.format(int(self.width/5),int(self.width/9))
                     BoxLayout:
                         orientation: 'vertical'
                         pos: self.parent.pos
@@ -81,6 +81,20 @@
                 MainPageButton:
                     on_press:
                         manager.transition.direction = 'left'
+                        manager.current = 'search'
+                    BoxLayout:
+                        orientation: 'vertical'
+                        pos: self.parent.pos
+                        size: self.parent.size
+                        Label:
+                            markup: True
+                            text: '[size=%d]%s[/size]'%(int(self.width/5),IconFonts().icon('ion-android-search'))
+                        Label:
+                            markup: True
+                            text: '[size={}]Search[/size]'.format(int(self.width/8))
+                MainPageButton:
+                    on_press:
+                        manager.transition.direction = 'left'
                         manager.current = 'settings'
                     #text: 15*' '+'[size={}][font=rap]Å[/font][/size]\n[size={}]Settings[/size]'.format(int(self.width/5),int(self.width/8))
                     BoxLayout:
@@ -89,7 +103,7 @@
                         size: self.parent.size
                         Label:
                             markup: True
-                            text: '[size={}][font=rap]Ñ[/font][/size]'.format(int(self.width/5))
+                            text: '[size=%d][font=rap]Ñ[/font][/size]'%(int(self.width/5))
                         Label:
                             markup: True
                             text: '[size={}]Settings[/size]'.format(int(self.width/8))
@@ -106,6 +120,13 @@
                 inventory.ids.inventoryButton.background_normal = 'atlas://data/images/defaulttheme/button_pressed'
             Inventory:
                 id: inventory
+
+        Screen:
+            name: 'search'
+            on_enter:
+                search.ids.searchButton.background_normal = 'atlas://data/images/defaulttheme/button_pressed'
+            Search:
+                id: search
 
         Screen:
             name: 'settings'

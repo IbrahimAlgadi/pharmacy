@@ -19,6 +19,20 @@ class Import():
             json["%s"%id] = data
         return json
 
+    def get_imports_page(self, offset, per_page):
+        if offset < 0:
+            offset = offset*-1
+        sql = ""
+        sql = "SELECT * FROM imports "
+        sql += " LIMIT {} ".format(per_page)
+        sql += " OFFSET {} ".format(offset)
+        self.export = self.execute(sql)
+        json = dict()
+        for data in self.export:
+            id = data.get('id')
+            json["%s" % id] = data
+        return json
+
     def get_import(self):
         self._import = self._db.getrecord()
         return self._import
@@ -50,6 +64,11 @@ class Import():
     def count_import(self):
         self._import = self._db.counterecords()
         return self._import
+
+    def execute(self, command):
+        self.export = self._db.execute(command)
+        return self.export
+
 
 if __name__ == '__main__':
     exp = Import()

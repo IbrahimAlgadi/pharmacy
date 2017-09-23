@@ -96,16 +96,12 @@ class ExportTable2(GridLayout):
     current = 0
     offset = 4
     _data = None
+    data_in_page = None
 
     def __init__(self, **kwargs):
         super(ExportTable2, self).__init__(**kwargs)
         self.pagination_next()
         self.call_load()
-        try:
-            self.k_id = sorted([int(x) for x in self._data])[-1] + 1
-            print self.parent
-        except:
-            print "Error"
 
     def delete_data(self, id):
         try:
@@ -122,51 +118,39 @@ class ExportTable2(GridLayout):
     def call_load(self):
         Clock.schedule_once(self.load_data)
 
-    def calc_pages(self, pages, num_pages, num_page):
-        pages_dict = dict()
-        pages_lens = list()
-        num = 0
-        while num <= len(self.pages):
-            pages_lens.append(num)
-            num = num + self.offset
-        pages_lens.append(len(self.pages))
-        for num in range(0, num_pages):
-            pages_dict[num + 1] = pages[pages_lens[num]:pages_lens[num + 1]]
-        page_count = len(pages_dict.keys())
-        return num_page, page_count, pages_dict[num_page]
-
     def pagination_next(self, page=1):
         self.current = int(page)
-        self.pages = sorted(list(self.data_object.get_export_details()))
-        no_pages = int(math.ceil(len(self.pages) / float(self.offset)))
-        try:
-            self.current, page_count, self.page = self.calc_pages(self.pages, no_pages, self.current)
-            self._data = self.page
+        no_pages = int(math.ceil(float(self.data_object.count_export_detail()) / float(self.offset)))
+        if self.current <= no_pages:
+            offset = (self.current - 1) * self.offset
+            self.data_in_page = self.data_object.get_export_details_page(offset, self.offset)
+            self.pages = list(self.data_in_page)
+            self._data = self.pages
             self.call_load()
-            if self.current == page_count:
-                deactivate = True
-            else:
-                deactivate = False
-        except:
+        else:
+            deactivate = False
+        if self.current >= no_pages:
             deactivate = True
-            self.current = 1
+            self.current = no_pages
+        else:
+            deactivate = False
         return deactivate, str(self.current)
 
     def pagination_prev(self, page=1):
         self.current = int(page)
-        self.pages = sorted(list(self.data_object.get_export_details()))
-        no_pages = int(math.ceil(len(self.pages) / float(self.offset)))
-        try:
-            self.current, page_count, self.page = self.calc_pages(self.pages, no_pages, self.current)
-            self._data = self.page
+        if self.current > 0:
+            offset = (self.current - 1) * self.offset
+            self.data_in_page = self.data_object.get_export_details_page(offset, self.offset)
+            self.pages = list(self.data_in_page)
+            self._data = self.pages
             self.call_load()
-            if self.current == 1:
-                deactivate = True
-            else:
-                deactivate = False
-        except:
+        else:
             deactivate = True
             self.current = 1
+        if self.current == 1:
+            deactivate = True
+        else:
+            deactivate = False
         return deactivate, str(self.current)
 
     def load_data(self, dt):
@@ -177,15 +161,15 @@ class ExportTable2(GridLayout):
         product_data_object = Product()
         product_data_dict = product_data_object.get_products()
         for key in self._data:
-            id = str(self.data_object.get_export_details().get(key)['id'])
-            #export_id = str(self.data_object.get_export_details().get(key)['export_id'])
-            #product_id = str(self.data_object.get_export_details().get(key)['product_id'])
-            export_id = export_data_dict.get(str(self.data_object.get_export_details().get(key)['export_id']))[
+            id = str(self.data_in_page.get(key)['id'])
+            #export_id = str(self.data_in_page.get(key)['export_id'])
+            #product_id = str(self.data_in_page.get(key)['product_id'])
+            export_id = export_data_dict.get(str(self.data_in_page.get(key)['export_id']))[
                 'destination']
-            product_id = product_data_dict.get(str(self.data_object.get_export_details().get(key)['product_id']))[
+            product_id = product_data_dict.get(str(self.data_in_page.get(key)['product_id']))[
                 'brandname']
-            quantity = str(self.data_object.get_export_details().get(key)['quantity'])
-            unitprice = str(self.data_object.get_export_details().get(key)['unitprice'])
+            quantity = str(self.data_in_page.get(key)['quantity'])
+            unitprice = str(self.data_in_page.get(key)['unitprice'])
 
             if self.count % 2 == 1:
                 self.d = DataWidget2(self.count,
@@ -224,10 +208,10 @@ class ExportTable2(GridLayout):
         self.pagination_next()
 
     def edit_data(self, id):
-        export_id = str(self.data_object.get_export_details().get(id)['export_id'])
-        product_id = str(self.data_object.get_export_details().get(id)['product_id'])
-        quantity = str(self.data_object.get_export_details().get(id)['quantity'])
-        unitprice = str(self.data_object.get_export_details().get(id)['unitprice'])
+        export_id = str(self.data_in_page.get(id)['export_id'])
+        product_id = str(self.data_in_page.get(id)['product_id'])
+        quantity = str(self.data_in_page.get(id)['quantity'])
+        unitprice = str(self.data_in_page.get(id)['unitprice'])
         b = GridLayout(size_hint=(None, None),
                        height='200px',
                        width="400px",

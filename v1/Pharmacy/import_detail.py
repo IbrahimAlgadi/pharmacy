@@ -20,6 +20,20 @@ class ImportDetail():
         # print json
         return json
 
+    def get_import_details_page(self, offset, per_page):
+        if offset < 0:
+            offset = offset*-1
+        sql = ""
+        sql = "SELECT * FROM import_details "
+        sql += " LIMIT {} ".format(per_page)
+        sql += " OFFSET {} ".format(offset)
+        self.export = self.execute(sql)
+        json = dict()
+        for data in self.export:
+            id = data.get('id')
+            json["%s" % id] = data
+        return json
+
     def get_import_detail(self):
         self.import_detail = self._db.getrecord()
         return self.import_detail
@@ -51,6 +65,10 @@ class ImportDetail():
     def count_import_detail(self):
         self.import_detail = self._db.counterecords()
         return self.import_detail
+
+    def execute(self, command):
+        self.export = self._db.execute(command)
+        return self.export
 
 if __name__ == '__main__':
     exp = ImportDetail()

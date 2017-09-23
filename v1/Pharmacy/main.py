@@ -30,6 +30,12 @@ from kivymd.snackbar import Snackbar
 
 # Inventory
 from inventory import *
+# Search
+from search import *
+
+# Fonts
+from iconfonts import *
+from os.path import join, dirname
 
 # TODO
 """
@@ -87,4 +93,8 @@ class PharmacyApp(App):
 if __name__ == '__main__':
     LabelBase.register(name='PICTO', fn_regular='includes/modernpics.otf')
     LabelBase.register(name='rap', fn_regular='includes/raphaelicons-webfont.ttf')
+    IconFonts().register('default_font', 'includes/ionicons/ionicons.ttf',
+                         join(dirname(__file__), 'includes/ionicons/ionicons.fontd'))
+    IconFonts().register('fontawesome', 'includes/fontaweasome/fontawesome-webfont.ttf',
+                         join(dirname(__file__), 'includes/fontaweasome/font-awesome.fontd'))
     PharmacyApp().run()

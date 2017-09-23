@@ -47,7 +47,8 @@ class ButtonDropper(Button):
         for key in data:
             _id = str(data_dict.get(key)['id'])
             destination = data_dict.get(key)['name']
-            btn = DropDownButton(self.textinput,self.number, _id, text=destination, size_hint_y=None, height=44)
+            btn = DropDownButton(self.textinput,self.number, _id, text=destination, size_hint_y=None,
+                                 height=44)
             self.number += 1
             btn.bind(on_release=lambda btn: self.dropdown.select(btn.text))
             self.dropdown.add_widget(btn)
@@ -64,19 +65,16 @@ class ProductsTable(GridLayout):
     pages = list()
     page = list()
     page_no = 0
-    current = 0
-    offset = 11
+    current = 1
+    offset = 10
     _data = None
+    data_in_page = None
 
     def __init__(self, **kwargs):
+        self.bind(minimum_height=self.setter('height'))
         super(ProductsTable, self).__init__(**kwargs)
         self.pagination_next()
         self.call_load()
-        try:
-            self.k_id = sorted([int(x) for x in self._data])[-1] + 1
-            print self.parent
-        except:
-            print "Error"
 
     def delete_data(self, id):
         try:
@@ -89,51 +87,40 @@ class ProductsTable(GridLayout):
     def call_load(self):
         Clock.schedule_once(self.load_data)
 
-    def calc_pages(self, pages, num_pages, num_page):
-        pages_dict = dict()
-        pages_lens = list()
-        num = 0
-        while num <= len(self.pages):
-            pages_lens.append(num)
-            num = num + self.offset
-        pages_lens.append(len(self.pages))
-        for num in range(0, num_pages):
-            pages_dict[num + 1] = pages[pages_lens[num]:pages_lens[num + 1]]
-        page_count = len(pages_dict.keys())
-        return num_page, page_count, pages_dict[num_page]
-
     def pagination_next(self, page=1):
         self.current = int(page)
-        self.pages = sorted(list(self.data_object.get_products()))
-        no_pages = int(math.ceil(len(self.pages) / float(self.offset)))
-        try:
-            self.current, page_count, self.page = self.calc_pages(self.pages, no_pages, self.current)
-            self._data = self.page
+        no_pages = int(math.ceil(float(self.data_object.count_product()) / float(self.offset)))
+
+        if self.current <= no_pages:
+            offset = (self.current - 1) * self.offset
+            self.data_in_page = self.data_object.get_products_page(offset, self.offset)
+            self.pages = list(self.data_in_page)
+            self._data = self.pages
             self.call_load()
-            if self.current == page_count:
-                deactivate = True
-            else:
-                deactivate = False
-        except:
+        else:
             deactivate = True
-            self.current = 1
+        if self.current >= no_pages:
+            deactivate = True
+            self.current = no_pages
+        else:
+            deactivate = False
         return deactivate, str(self.current)
 
     def pagination_prev(self, page=1):
         self.current = int(page)
-        self.pages = sorted(list(self.data_object.get_products()))
-        no_pages = int(math.ceil(len(self.pages) / float(self.offset)))
-        try:
-            self.current, page_count, self.page = self.calc_pages(self.pages, no_pages, self.current)
-            self._data = self.page
+        if self.current > 0:
+            offset = (self.current - 1) * self.offset
+            self.data_in_page = self.data_object.get_products_page(offset, self.offset)
+            self.pages = list(self.data_in_page)
+            self._data = self.pages
             self.call_load()
-            if self.current == 1:
-                deactivate = True
-            else:
-                deactivate = False
-        except:
+        else:
             deactivate = True
             self.current = 1
+        if self.current == 1:
+            deactivate = True
+        else:
+            deactivate = False
         return deactivate, str(self.current)
 
     def load_data(self, dt):
@@ -141,26 +128,41 @@ class ProductsTable(GridLayout):
         self.count = self.current * self.offset - self.offset + 1
         categories_object = Category()
         self.category_dict = categories_object.get_categories()
-        # print self.category_dict
+
+        self._data = sorted(list(self.data_in_page))
+
         for key in self._data:
-            id = str(self.data_object.get_products().get(key)['id'])
-            brandname = str(self.data_object.get_products().get(key)['brandname'])
-            genericname = str(self.data_object.get_products().get(key)['genericname'])
-            quantityperunit = str(self.data_object.get_products().get(key)['quantityperunit'])
-            unitprice = str(self.data_object.get_products().get(key)['unitprice'])
+            id = str(self.data_in_page.get(key)['id'])
+            brandname = str(self.data_in_page.get(key)['brandname'])
+            genericname = str(self.data_in_page.get(key)['genericname'])
+            quantityperunit = str(self.data_in_page.get(key)['quantityperunit'])
+            unitprice = str(self.data_in_page.get(key)['unitprice'])
             category_id = str(self.category_dict.get( str(self.data_object.get_products().get(key)['category_id']) )['name'])
-            # print self.data_object.get_products().get(key)['category_id']
-            expiry_date = str(self.data_object.get_products().get(key)['expiry_date'])
-            status = str(self.data_object.get_products().get(key)['status'])
+            expiry_date = str(self.data_in_page.get(key)['expiry_date'])
+            status = str(self.data_in_page.get(key)['status'])
+
+            size = 0
+
+            if len(brandname) > len(category_id) and len(brandname) > len(genericname) :
+                size = len(brandname)
+            elif len(category_id ) > len(brandname) and len(category_id ) > len(genericname):
+                size = len(category_id)
+            elif len(genericname) > len(brandname) and len(genericname) > len(brandname):
+                size = len(genericname)
+
+            if size <= 15:
+                size = 50
+            elif size > 15:
+                size += 40
 
             if self.count % 2 == 1:
                 self.d = DataWidget2(self.count,
                                      size_hint_y=None,
-                                     height='40px')
+                                     height='{}px'.format(size))
             else:
                 self.d = DataWidget(self.count,
                                     size_hint_y=None,
-                                    height='40px')
+                                    height='{}px'.format(size))
 
             b = EditButton(self, id, text="edit")
             de = DeleteButton(self, self.d, id, text="delete")
@@ -169,7 +171,7 @@ class ProductsTable(GridLayout):
             option.add_widget(b)
             option.add_widget(de)
 
-            self.d.add_widget(DataLabel(text=str(self.count)))
+            self.d.add_widget(DataLabel(text=str(self.count), size_hint_x=None, width='40px'))
             self.d.add_widget(DataLabel(text=brandname))
             self.d.add_widget(DataLabel(text=genericname))
             self.d.add_widget(DataLabel(text=quantityperunit))
@@ -196,13 +198,13 @@ class ProductsTable(GridLayout):
         self.pagination_next()
 
     def edit_data(self, id):
-        brandname = str(self.data_object.get_products().get(id)['brandname'])
-        genericname = str(self.data_object.get_products().get(id)['genericname'])
-        quantityperunit = str(self.data_object.get_products().get(id)['quantityperunit'])
-        unitprice = str(self.data_object.get_products().get(id)['unitprice'])
-        category_id = str(self.data_object.get_products().get(id)['category_id'])
-        expiry_date = str(self.data_object.get_products().get(id)['expiry_date'])
-        status = str(self.data_object.get_products().get(id)['status'])
+        brandname = str(self.data_in_page.get(id)['brandname'])
+        genericname = str(self.data_in_page.get(id)['genericname'])
+        quantityperunit = str(self.data_in_page.get(id)['quantityperunit'])
+        unitprice = str(self.data_in_page.get(id)['unitprice'])
+        category_id = str(self.data_in_page.get(id)['category_id'])
+        expiry_date = str(self.data_in_page.get(id)['expiry_date'])
+        status = str(self.data_in_page.get(id)['status'])
         b = GridLayout(size_hint=(None, None),
                        height='200px',
                        width="400px",
@@ -269,7 +271,8 @@ class ProductsTable(GridLayout):
         self.pagination_next()
         self.call_load()
 
-    def add_data(self, brandname, genericname, quantityperunit, unitprice, category_id, expiry_date, status):
+    def add_data(self, product_barcode, brandname, genericname, quantityperunit, unitprice, category_id, expiry_date, status):
+        self.data_object.barcode = product_barcode
         self.data_object.brandname = brandname
         self.data_object.genericname = genericname
         self.data_object.quantityperunit = quantityperunit
@@ -277,9 +280,12 @@ class ProductsTable(GridLayout):
         self.data_object.category_id = category_id
         self.data_object.expiry_date = expiry_date
         self.data_object.status = status
-        if brandname != '' and genericname != '' and quantityperunit != '' and unitprice != '' and category_id != '' and expiry_date != '' and status != '':
-            self.data_object.insert_product()
+        if product_barcode != '':
+            if brandname != '' and genericname != '' and quantityperunit != '' and unitprice != '' and category_id != '' and expiry_date != '' and status != '':
+                self.data_object.insert_product()
+            else:
+                Snackbar(text=" You Need To Fill All Fields ").show()
         else:
-            Snackbar(text=" You Need To Fill All Fields ").show()
+            Snackbar(text=" You Need To Add Barcode It's Important ").show()
         self.pagination_next()
         self.call_load()

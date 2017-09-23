@@ -14,6 +14,9 @@ class DropDownButton(Button):
         self.dist_id = id
         self.button_number = number
         kwargs['background_normal'] = ''
+        kwargs['text_size'] = self.size
+        kwargs['halign'] = 'left'
+        kwargs['valign'] = 'top'
         if self.button_number % 2 == 1:
             kwargs['background_color'] = C('#1976d2')
         else:

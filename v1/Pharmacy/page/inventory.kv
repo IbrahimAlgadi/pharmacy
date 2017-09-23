@@ -136,17 +136,23 @@
                             spacing: '10px'
                             padding: '10px'
                             MDTextField:
+                                id: product_barcode
+                                hint_text: 'Barcode'
+                            MDTextField:
                                 id: product_brandname
                                 hint_text: 'Brand Name'
                             MDTextField:
                                 id: product_genericname
                                 hint_text: 'Generic Name'
-                            MDTextField:
-                                id: product_quantityperunit
-                                hint_text: 'Quantity Per Unit'
-                            MDTextField:
-                                id: product_unitprice
-                                hint_text: 'Unit Price'
+                            GridLayout:
+                                cols: 2
+                                spacing: '10px'
+                                MDTextField:
+                                    id: product_quantityperunit
+                                    hint_text: 'Quantity Per Unit'
+                                MDTextField:
+                                    id: product_unitprice
+                                    hint_text: 'Unit Price'
                             TextInputWithDropper:
                                 ButtonDropper:
                                     id: product_category
@@ -175,21 +181,27 @@
                             MDTextField:
                                 id: product_status
                                 hint_text: 'Status'
-                            Button:
-                                size_hint_y: None
-                                height: '60px'
-                                text: 'Add'
-                                background_normal: ''
-                                background_color: C(color_primary)
+                            MDFloatingActionButton:
+                                id: float_act_btn
+                                text_color: C('#FFFFFF')
+                                icon: 'plus'
+                                # opposite_colors: True
+                                md_bg_color: C(color_primary)
+                                elevation_normal: 8
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.2}
                                 on_release:
-                                    product_table.add_data(product_brandname.text, product_genericname.text, product_quantityperunit.text, product_unitprice.text, product_category_id.text, products_date_label.text, product_status.text)
-                                    product_brandname.text = product_genericname.text = product_quantityperunit.text = product_unitprice.text =  product_status.text = product_category_id.text = ''
+                                    product_table.add_data(product_barcode.text,product_brandname.text, product_genericname.text, product_quantityperunit.text, product_unitprice.text, product_category_id.text, products_date_label.text, product_status.text)
+                                    product_barcode.text = product_brandname.text = product_genericname.text = product_quantityperunit.text = product_unitprice.text =  product_status.text = product_category_id.text = ''
                                     product_category.text = 'Category'
                                     products_date_label.text = str(date.today())
-                        BoxLayout:
-                            orientation: 'vertical'
+                        GridLayout:
+                            cols: 1
 
-                            ProductsTableHeader:
+                            GridLayout:
+                                cols: 1
+                                size_hint: 1, None
+                                height: '90px'
+                                ProductsTableHeader:
 
                             BoxLayout:
                                 orientation: 'vertical'
@@ -247,12 +259,14 @@
                                 helper_text: "Category Name Shoudn't Be Empty!"
                                 required: True
                                 helper_text_mode: "on_error"
-                            Button:
-                                size_hint_y: None
-                                height: '60px'
-                                text: 'Add'
-                                background_normal: ''
-                                background_color: C(color_primary)
+                            MDFloatingActionButton:
+                                id: float_act_btn
+                                text_color: C('#FFFFFF')
+                                icon: 'plus'
+                                # opposite_colors: True
+                                md_bg_color: C(color_primary)
+                                elevation_normal: 8
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.2}
                                 on_release:
                                     category_table.add_data(category_name.text)
                                     category_name.text = ''
@@ -346,12 +360,14 @@
                             MDTextField:
                                 id: import_status
                                 hint_text: 'Status'
-                            Button:
-                                size_hint_y: None
-                                height: '60px'
-                                text: 'Add'
-                                background_normal: ''
-                                background_color: C(color_primary)
+                            MDFloatingActionButton:
+                                id: float_act_btn
+                                text_color: C('#FFFFFF')
+                                icon: 'plus'
+                                # opposite_colors: True
+                                md_bg_color: C(color_primary)
+                                elevation_normal: 8
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.2}
                                 on_release:
                                     import_table1.add_data(import_receipt_number.text, imports_date_label.text, import_supplier_id.text, import_status.text)
                                     import_supplier.text = 'Supplier'
@@ -447,12 +463,14 @@
                                 MDTextField:
                                     id: import_unit_price
                                     hint_text: 'Unit Price'
-                            Button:
-                                size_hint_y: None
-                                height: '60px'
-                                text: 'Add'
-                                background_normal: ''
-                                background_color: C(color_primary)
+                            MDFloatingActionButton:
+                                id: float_act_btn
+                                text_color: C('#FFFFFF')
+                                icon: 'plus'
+                                # opposite_colors: True
+                                md_bg_color: C(color_primary)
+                                elevation_normal: 8
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.2}
                                 on_release:
                                     import_table2.add_data(import_import_id_text.text, import_product_id.text, import_quantity.text, import_unit_price.text)
                                     import_import_id_text.text = import_product_id.text = import_quantity.text = import_unit_price.text = ''
@@ -531,12 +549,14 @@
                             MDTextField:
                                 id: export_status
                                 hint_text: 'Status'
-                            Button:
-                                size_hint_y: None
-                                height: '60px'
-                                text: 'Add'
-                                background_normal: ''
-                                background_color: C(color_primary)
+                            MDFloatingActionButton:
+                                id: float_act_btn
+                                text_color: C('#FFFFFF')
+                                icon: 'plus'
+                                # opposite_colors: True
+                                md_bg_color: C(color_primary)
+                                elevation_normal: 8
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.2}
                                 on_release:
                                     export_table1.add_data(export_destination.text, exports_date_label.text, export_status.text)
                                     export_destination.text = export_status.text = ''
@@ -628,12 +648,14 @@
                                 MDTextField:
                                     id: export_unitprice
                                     hint_text: 'Unit Price'
-                            Button:
-                                size_hint_y: None
-                                height: '60px'
-                                text: 'Add'
-                                background_normal: ''
-                                background_color: C(color_primary)
+                            MDFloatingActionButton:
+                                id: float_act_btn
+                                text_color: C('#FFFFFF')
+                                icon: 'plus'
+                                # opposite_colors: True
+                                md_bg_color: C(color_primary)
+                                elevation_normal: 8
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.2}
                                 on_release:
                                     export_table2.add_data(export_export_id_text.text, export_product_id.text, export_quantity.text, export_unitprice.text)
                                     export_export_id_text.text= export_product_id.text= export_quantity.text= export_unitprice.text = ''
@@ -701,12 +723,14 @@
                             MDTextField:
                                 id: supplier_contact
                                 hint_text: 'Contact'
-                            Button:
-                                size_hint_y: None
-                                height: '60px'
-                                text: 'Add'
-                                background_normal: ''
-                                background_color: C(color_primary)
+                            MDFloatingActionButton:
+                                id: float_act_btn
+                                text_color: C('#FFFFFF')
+                                icon: 'plus'
+                                # opposite_colors: True
+                                md_bg_color: C(color_primary)
+                                elevation_normal: 8
+                                pos_hint: {'center_x': 0.5, 'center_y': 0.2}
                                 on_release:
                                     supplier_table.add_data(supplier_name.text, supplier_address.text, supplier_contact.text)
                                     supplier_name.text = supplier_address.text = supplier_contact.text = ''

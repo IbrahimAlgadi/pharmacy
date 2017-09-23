@@ -1,7 +1,7 @@
 <ProductsTableHeader@GridLayout>:
     cols: 9
     size_hint_y: None
-    height: '90px'
+    height: '50px'
     canvas.before:
         Color:
             rgba: C('#455a64')
@@ -9,6 +9,8 @@
             pos: self.pos
             size: self.size
     Head:
+        size_hint_x: None
+        width: '40px'
         text: "[size=12][b]Id[/b][/size]"
 
     Head:

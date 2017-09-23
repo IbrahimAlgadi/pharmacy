@@ -20,6 +20,20 @@ class ExportDetail():
         # print json
         return json
 
+    def get_export_details_page(self, offset, per_page):
+        if offset < 0:
+            offset = offset*-1
+        sql = ""
+        sql = "SELECT * FROM export_details "
+        sql += " LIMIT {} ".format(per_page)
+        sql += " OFFSET {} ".format(offset)
+        self.export = self.execute(sql)
+        json = dict()
+        for data in self.export:
+            id = data.get('id')
+            json["%s" % id] = data
+        return json
+
     def get_export_detail(self):
         self.export_detail = self._db.getrecord()
         return self.export_detail
@@ -57,6 +71,10 @@ class ExportDetail():
     def count_export_detail(self):
         self.export_detail = self._db.counterecords()
         return self.export_detail
+
+    def execute(self, command):
+        self.export = self._db.execute(command)
+        return self.export
 
 if __name__ == '__main__':
     exp = ExportDetail()
