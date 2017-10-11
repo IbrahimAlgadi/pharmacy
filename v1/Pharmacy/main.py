@@ -42,8 +42,6 @@ from os.path import join, dirname
 The Problem Of Import Details And Export Details
 """
 
-Window.maximize()
-
 from kivy import Config
 Config.set('graphics', 'multisamples', '0')
 Config.set('graphics', 'resizable', '0')
@@ -91,6 +89,9 @@ class PharmacyApp(App):
         pass
 
 if __name__ == '__main__':
+    # windows full screen
+    Window.maximize()
+
     LabelBase.register(name='PICTO', fn_regular='includes/modernpics.otf')
     LabelBase.register(name='rap', fn_regular='includes/raphaelicons-webfont.ttf')
     IconFonts().register('default_font', 'includes/ionicons/ionicons.ttf',

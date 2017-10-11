@@ -26,6 +26,9 @@ from supplier import *
 from table_buttons import *
 from supplier_report import *
 
+from excel import *
+from datetime import datetime
+
 class SupplierSearchTable(GridLayout):
     count = NumericProperty(0)
     d = ObjectProperty(None)
@@ -79,6 +82,38 @@ class SupplierSearchTable(GridLayout):
         sorted_list = sorted(self.search_result)
         th = Thread(target=generate_pdf, args=(sorted_list, self.search_result))
         th.start()
+
+    def generate_excel_sheet(self, dt):
+        address = list()
+        contact = list()
+        id = list()
+        name = list()
+
+        # result = list(sup.execute('SELECT * FROM suppliers'))
+
+        # print self.search_result.values()
+
+        for v in self.search_result.values():
+            address.append(v.get('address'))
+            contact.append(int(v.get('contact')))
+            id.append(int(v.get('id')))
+            name.append(v.get('name'))
+
+        data_dict = {
+            # '1_ID': id,
+            '2_Name': name,
+            '3_Address': address,
+            '4_Contact': contact
+        }
+
+        # generate_excel(data_dict, excel_file_name="supplier_report4")
+
+        th = Thread(target=generate_excel, args=(data_dict, "ExcelReports\\supplier_report\\supplier_report_"+
+                                                 str(datetime.today()).replace(" ","_").replace(":", "_")))
+        th.start()
+
+    def make_excel(self):
+        Clock.schedule_once(self.generate_excel_sheet)
 
     def make_report(self):
         Clock.schedule_once(self.generate_pdf)

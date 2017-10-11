@@ -26,6 +26,9 @@ from table_buttons import *
 
 from threading import Thread
 
+from excel import *
+from datetime import datetime
+
 # TODO
 """
 Create the report headers using the fpdf
@@ -74,6 +77,32 @@ class CategoriesSearchTable(GridLayout):
         sorted_list = sorted(self.search_result)
         th = Thread(target=generate_pdf, args=(sorted_list, self.search_result))
         th.start()
+
+    def generate_excel_sheet(self, dt):
+        id = list()
+        name = list()
+
+        # result = list(sup.execute('SELECT * FROM suppliers'))
+
+        # print self.search_result.values()
+
+        for v in self.search_result.values():
+            id.append(int(v.get('id')))
+            name.append(v.get('name'))
+
+        data_dict = {
+            # '1_ID': id,
+            '2_Name': name,
+        }
+
+        # generate_excel(data_dict, excel_file_name="supplier_report4")
+
+        th = Thread(target=generate_excel, args=(data_dict, "ExcelReports\\categories_report\\categories_report_"+
+                                                 str(datetime.today()).replace(" ","_").replace(":", "_")))
+        th.start()
+
+    def make_excel(self):
+        Clock.schedule_once(self.generate_excel_sheet)
 
     def make_report(self):
         Clock.schedule_once(self.generate_pdf)

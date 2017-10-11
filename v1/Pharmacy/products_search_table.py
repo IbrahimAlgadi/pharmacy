@@ -30,6 +30,9 @@ from threading import Thread
 
 from dropdown_tools import *
 
+from excel import *
+from datetime import datetime
+
 class ButtonDropper(Button):
     _id = None
     number = NumericProperty(0)
@@ -98,6 +101,53 @@ class ProductsSearchTable(GridLayout):
         cat = Category()
         th = Thread(target=generate_pdf, args=(sorted_list, self.search_result, cat.get_categories()))
         th.start()
+
+    def generate_excel_sheet(self, dt):
+        id = []
+        brandname = []
+        genericname = []
+        quantityperunit = []
+        unitprice = []
+        category_id = []
+        expiry_date = []
+        status = []
+
+        # for interpreting the category type
+        categories_object = Category()
+        self.category_dict = categories_object.get_categories()
+
+        try:
+            for v in self.search_result.values():
+                id.append(int(v.get('id')))
+                brandname.append(v.get('brandname'))
+                genericname.append(v.get('genericname'))
+                quantityperunit.append(int(v.get('quantityperunit')))
+                unitprice.append(float(v.get('unitprice')))
+                category_id.append(self.category_dict.get(str(v.get('category_id')))['name'])
+                expiry_date.append(v.get('expiry_date'))
+                status.append(v.get('status'))
+
+            data_dict = {
+                # '1_ID': id,
+                '2_Brand_Name': brandname,
+                '3_Generic_Name': genericname,
+                '4_Quantity_Per_Unit': quantityperunit,
+                '5_Unit_Price': unitprice,
+                '6_Category': category_id,
+                '7_Expiry_Date': expiry_date,
+                '8_Status': status
+            }
+        except:
+            # i will use snack bar to tell an exception
+            pass
+        # generate_excel(data_dict, excel_file_name="supplier_report4")
+
+        th = Thread(target=generate_excel, args=(data_dict, "ExcelReports\\products_report\\products_report_"+
+                                                 str(datetime.today()).replace(" ","_").replace(":", "_")))
+        th.start()
+
+    def make_excel(self):
+        Clock.schedule_once(self.generate_excel_sheet)
 
     def make_report(self):
         Clock.schedule_once(self.generate_pdf)
