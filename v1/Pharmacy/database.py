@@ -35,7 +35,7 @@ class Database():
             ', '.join(keys),
             ', '.join('%s' for i in range(len(values)))
         )
-        print q , tuple(values)
+        # print q , tuple(values)
         self.cur.execute(q, values)
         self.db.commit()
         return self.db.affected_rows()
@@ -53,8 +53,8 @@ class Database():
             self.table,
             ', '.join(map(lambda str: '{}=%s'.format(str), keys))
         )
-        print q
-        print tuple(values+[id])
+        # print q
+        # print tuple(values+[id])
         self.cur.execute(q, values+[id])
         self.db.commit()
         return self.db.affected_rows()

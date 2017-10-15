@@ -1,8 +1,8 @@
 #: include includes/colors.kv
 #: include page/sale.kv
 #: import C kivy.utils.get_color_from_hex
+#:import MDCard kivymd.card.MDCard
 
-<Dashboard@BoxLayout>:
 
 <SideButton@Button>:
     markup: True
@@ -12,6 +12,16 @@
 <Sep@Label>:
     size_hint_y: None
     height: '3px'
+
+<CustomLayout>
+    canvas.before:
+        BorderImage:
+            # BorderImage behaves like the CSS BorderImage
+            border: 10, 10, 10, 10
+            texture: self.background_image.texture
+            pos: self.pos
+            size: self.size
+
 
 <Dashboard>:
     BoxLayout:
@@ -79,3 +89,102 @@
                     text: '[size={}]Settings[/size]'.format(int(self.width/6))
 
     BoxLayout:
+        ScrollView:
+            id: scroller
+            size_hint: 1, None
+            size: self.parent.width, self.parent.height
+
+            DashboardDisplay:
+                spacing: '10px'
+                padding: '20px'
+                size_hint_y: None
+                size_hint_x: 1
+                cols: 1
+
+                BoxLayout:
+                    spacing: '20px'
+                    orientation: 'horizontal'
+                    size_hint_y: None
+                    height: '570px'
+                    GridLayout:
+                        spacing: '20px'
+                        cols: 1
+                        size_hint_x: None
+                        width: '300px'
+                        MDCard:
+                            BoxLayout:
+                                orientation: 'vertical'
+                                Label:
+                                    size_hint_y: None
+                                    height: '50px'
+                                    canvas.before:
+                                        Color:
+                                            rgba: C("#008eff")
+                                        Rectangle:
+                                            # self here refers to the widget i.e BoxLayout
+                                            pos: self.pos
+                                            size: self.size
+                                    markup: True
+                                    text: "[color=#ffffff][size=30]Today Sales[/size][/color]"
+                                Label:
+                                    markup: True
+                                    text: "[size=40][b][color=#008eff]12,000[/color][/b][/size]"
+                        MDCard:
+                            BoxLayout:
+                                orientation: 'vertical'
+                                Label:
+                                    size_hint_y: None
+                                    height: '50px'
+                                    canvas.before:
+                                        Color:
+                                            rgba: C("#9600ff")
+                                        Rectangle:
+                                            # self here refers to the widget i.e BoxLayout
+                                            pos: self.pos
+                                            size: self.size
+                                    markup: True
+                                    text: "[color=#ffffff][size=30]This Month[/size][/color]"
+                                Label:
+                                    markup: True
+                                    text: "[size=40][b][color=#9600ff]67,000[/color][/b][/size]"
+                        MDCard:
+                            BoxLayout:
+                                orientation: 'vertical'
+                                Label:
+                                    size_hint_y: None
+                                    height: '50px'
+                                    canvas.before:
+                                        Color:
+                                            rgba: C("#ff8400")
+                                        Rectangle:
+                                            # self here refers to the widget i.e BoxLayout
+                                            pos: self.pos
+                                            size: self.size
+                                    markup: True
+                                    text: "[color=#ffffff][size=30]This Year[/size][/color]"
+                                Label:
+                                    markup: True
+                                    text: "[size=40][b][color=#ff8400]87,000,000[/color][/b][/size]"
+
+                    GridLayout:
+                        spacing: '20px'
+                        cols: 1
+                        MDCard:
+                            BoxLayout:
+                                padding: '5px'
+                                Button:
+                                    background_normal: "img/figure1.jpg"
+                        MDCard:
+                            BoxLayout:
+                                padding: '5px'
+                                Button:
+                                    background_normal: "img/figure2.jpg"
+
+                GridLayout:
+                    spacing: '20px'
+                    padding: '20px'
+                    size_hint_y: None
+                    height: '500px'
+                    cols: 2
+                    MDCard
+                    MDCard

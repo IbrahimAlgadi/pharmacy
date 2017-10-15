@@ -138,6 +138,7 @@
                             MDTextField:
                                 id: product_barcode
                                 hint_text: 'Barcode'
+                                on_text: product_table.validate_barcode(self.text)
                             MDTextField:
                                 id: product_brandname
                                 hint_text: 'Brand Name'

@@ -1,0 +1,41 @@
+<VouchersTableHeader@GridLayout>:
+    cols: 5
+    size_hint_y: None
+    height: '90px'
+    canvas.before:
+        Color:
+            rgba: C('#455a64')
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    Head:
+        text: "[size=20][b]id[/b][/size]"
+    Head:
+        text: "[size=20][b]Date[/b][/size]"
+    Head:
+        text: "[size=20][b]Submitted By[/b][/size]"
+    Head:
+        text: "[size=20][b]status[/b][/size]"
+    Head:
+        text: "[size=20][b]Display Details[/b][/size]"
+
+<VouchersDetailsTableHeader@GridLayout>:
+    cols: 5
+    size_hint_y: None
+    height: '90px'
+    canvas.before:
+        Color:
+            rgba: C('#455a64')
+        Rectangle:
+            pos: self.pos
+            size: self.size
+    Head:
+        text: "[size=20][b]id[/b][/size]"
+    Head:
+        text: "[size=20][b]Product[/b][/size]"
+    Head:
+        text: "[size=20][b]Quantity[/b][/size]"
+    Head:
+        text: "[size=20][b]Unit Price[/b][/size]"
+    Head:
+        text: "[size=20][b]Select To Delete[/b][/size]"

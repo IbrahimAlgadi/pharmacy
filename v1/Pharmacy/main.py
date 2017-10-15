@@ -32,6 +32,8 @@ from kivymd.snackbar import Snackbar
 from inventory import *
 # Search
 from search import *
+from sales import *
+from dashboard import *
 
 # Fonts
 from iconfonts import *
@@ -46,17 +48,6 @@ from kivy import Config
 Config.set('graphics', 'multisamples', '0')
 Config.set('graphics', 'resizable', '0')
 Config.set('input', 'mouse', 'mouse,disable_multitouch')
-
-# SALES PART
-class Sales(BoxLayout):
-    previous_date = ObjectProperty()
-
-    def sale_date_pick(self):
-        MDDatePicker(self.set_previous_date).open()
-
-    def set_previous_date(self, date_obj):
-        self.previous_date = date_obj
-        self.ids.sale_date_picker_label.text = str(date_obj)
 
 
 

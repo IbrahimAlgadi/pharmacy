@@ -1,10 +1,15 @@
 #: include includes/colors.kv
+#: include page/vouchers.kv
 #: import C kivy.utils.get_color_from_hex
+
 
 #:import MDTextField kivymd.textfields.MDTextField
 #:import MDLabel kivymd.label.MDLabel
 #:import MDIconButton kivymd.button.MDIconButton
+#:import MDCard kivymd.card.MDCard
 #:import date datetime.date
+
+
 
 <SideButton@Button>:
     markup: True
@@ -94,9 +99,6 @@
                 BoxLayout:
                     size_hint_y: None
                     height: '50px'
-                    #MDIconButton:
-                    #    icon: 'calendar'
-                    #    on_release: root.sale_date_pick()
 
                     MDTextField:
                         id: sale_date_picker_label
@@ -108,21 +110,53 @@
                     hint_text: 'Submitted By'
                     text: "Hema"
                     disabled: True
-                #MDTextField:
-                #    id: sales_status
-                #    hint_text: 'Status'
-                MDFloatingActionButton:
-                    id: float_act_btn
-                    text_color: C('#FFFFFF')
-                    icon: 'plus'
-                    # opposite_colors: True
-                    md_bg_color: C(color_primary)
-                    elevation_normal: 8
-                    pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+            # this is where i will put the table
+            GridLayout:
+                cols: 1
 
-            Button:
-                background_color: C(color_primary)
-				text: 'Table'
+                GridLayout:
+                    cols: 1
+                    size_hint: 1, None
+                    height: '40px'
+                    VouchersTableHeader:
+                MDCard:
+                    BoxLayout:
+                        orientation: 'vertical'
+                        ScrollView:
+                            id: scroller
+                            size_hint: 1, None
+                            size: self.parent.width, self.parent.height-40
+                            VouchersTable:
+                                total: display_total
+                                voucher_details: vouchers_details_table
+                                id: vouchers_table
+                                size_hint_y: None
+                                size_hint_x: 1
+                                cols: 1
+                        BoxLayout:
+                            size_hint_y: None
+                            height: '40px'
+                            padding: '3px'
+                            Label:
+                            MDIconButton:
+                                icon: 'arrow-right'
+                                id: voucher_next
+                                on_release:
+                                    self.disabled, voucher_page_no.text = vouchers_table.pagination_next(int(voucher_page_no.text)+1)
+                                    voucher_previous.disabled = False
+                            MDLabel:
+                                id: voucher_page_no
+                                halign: 'center'
+                                valign: 'middle'
+                                text: '1'
+                            MDIconButton:
+                                icon: 'arrow-left'
+                                text: 'previous'
+                                id: voucher_previous
+                                on_release:
+                                    self.disabled, voucher_page_no.text = vouchers_table.pagination_prev(int(voucher_page_no.text)-1)
+                                    voucher_next.disabled = False
+                            Label:
         BoxLayout:
             GridLayout:
                 cols: 1
@@ -133,32 +167,137 @@
                 MDTextField:
                     id: sales_barcode
                     hint_text: 'Barcode'
+                    on_text:
+                        vouchers_details_table.get_product_from_barcode(self.text)
+                    disabled: True
                 MDTextField:
                     id: sales_voucher_product_id
                     hint_text: 'Product'
-                    disables: True
+                    disabled: True
                 MDTextField:
                     id: sales_voucher_product_quantity
                     hint_text: 'Quantity'
+                    disabled: True
                 GridLayout:
-                    cols: 2
-                    spacing: '30px'
+                    cols: 4
+                    spacing: '20px'
                     MDFloatingActionButton:
-                        id: float_act_btn
+                        id: float_btn_add_voucher
+                        text_color: C('#FFFFFF')
+                        icon: 'plus'
+                        # opposite_colors: True
+                        md_bg_color: C(color_primary)
+                        elevation_normal: 8
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+                        on_release:
+                            sales_barcode.disabled = sales_voucher_product_quantity.disabled = False
+                            sales_barcode.focus = True
+                            float_btn_add_product.disabled = False
+                            float_btn_add_voucher.disabled = True
+                            vouchers_table.reset_total()
+                            vouchers_table.add_new_voucher(sale_date_picker_label.text, sales_submitted_by.text, "sold")
+                            vouchers_details_table.create_new_voucher(vouchers_table.current_voucher)
+
+
+                    MDFloatingActionButton:
+                        id: float_btn_add_product
+                        text_color: C('#FFFFFF')
+                        icon: 'plus'
+                        # opposite_colors: True
+                        md_bg_color: C(green_color)
+                        elevation_normal: 8
+                        pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+                        disabled: True
+                        on_release:
+                            vouchers_details_table.add_data(sales_voucher_product_quantity.text)
+                            float_btn_add_sell_voucher.disabled = False
+                            sales_barcode.text = sales_voucher_product_quantity.text = sales_voucher_product_id.text = ''
+                            # float_btn_add_product.disabled = True
+                            sales_barcode.focus = True
+
+                    MDFloatingActionButton:
+                        id: float_btn_add_sell_voucher
                         text_color: C('#FFFFFF')
                         icon: 'cash-multiple'
                         # opposite_colors: True
                         md_bg_color: C(green_color)
                         elevation_normal: 8
                         pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+                        disabled: True
+                        on_release:
+                            float_btn_add_product.disabled = float_btn_delete_product.disabled = float_btn_add_sell_voucher.disabled = True
+                            float_btn_add_voucher.disabled = False
+                            vouchers_details_table.add_to_database()
+
                     MDFloatingActionButton:
-                        id: float_act_btn
+                        # the delete button will be true when i select an item to delete
+                        id: float_btn_delete_product
                         text_color: C('#FFFFFF')
                         icon: 'delete-forever' # 'close'
                         # opposite_colors: True
                         md_bg_color: C(danger)
                         elevation_normal: 8
                         pos_hint: {'center_x': 0.5, 'center_y': 0.2}
-            Button:
-                text: 'Table'
-				background_color: C(color_primary)
+                        disabled: True
+                        on_release:
+                            vouchers_details_table.delete_from_the_buffer()
+                            self.disabled = True
+
+
+            GridLayout:
+                cols: 1
+
+                GridLayout:
+                    cols: 1
+                    size_hint: 1, None
+                    height: '40px'
+                    VouchersDetailsTableHeader:
+                MDCard:
+                    BoxLayout:
+                        orientation: 'vertical'
+                        ScrollView:
+                            id: scroller
+                            size_hint: 1, None
+                            size: self.parent.width, self.parent.height-80
+                            VouchersDetailsTable:
+                                total: display_total
+                                delete_product_button: float_btn_delete_product
+                                product_name: sales_voucher_product_id
+
+                                id: vouchers_details_table
+                                size_hint_y: None
+                                size_hint_x: 1
+                                cols: 1
+                        #BoxLayout:
+                        #    size_hint_y: None
+                        #    height: '40px'
+                        Label:
+                            id: display_total
+                            markup: True
+                            size_hint_y: None
+                            height: '40px'
+                            text: '[color=#000000][b][size=40]0.0SDG[/size][/b][/color]'
+                        BoxLayout:
+                            size_hint_y: None
+                            height: '40px'
+                            padding: '3px'
+                            Label:
+                            MDIconButton:
+                                icon: 'arrow-right'
+                                id: voucher_details_next
+                                #on_release:
+                                #    self.disabled, voucher_details_page_no.text = vouchers_details_table.pagination_next(int(voucher_details_page_no.text)+1)
+                                #    voucher_details_previous.disabled = False
+                            MDLabel:
+                                id: voucher_details_page_no
+                                halign: 'center'
+                                valign: 'middle'
+                                text: '1'
+                            MDIconButton:
+                                icon: 'arrow-left'
+                                text: 'previous'
+                                id: voucher_details_previous
+                                #on_release:
+                                #    self.disabled, voucher_details_page_no.text = vouchers_details_table.pagination_prev(int(voucher_details_page_no.text)-1)
+                                #    voucher_details_next.disabled = False
+                            Label:

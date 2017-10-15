@@ -19,18 +19,34 @@ from kivymd.dialog import MDDialog
 from kivymd.textfields import MDTextField
 from kivymd.date_picker import MDDatePicker
 from kivymd.snackbar import Snackbar
+from kivymd.selectioncontrols import MDCheckbox
 
 # database
-from product import *
+# from product import *
 from table_buttons import *
-from category import *
+# from category import *
+from voucher import *
 
 from dropdown_tools import *
+
+
+class Voucher_selector(MDCheckbox):
+    voucher_id = None
+    vouchers_details_table = ObjectProperty(None)
+
+    def __init__(self, voucher_id, voucher_details, **kwargs):
+        self.voucher_id = voucher_id
+        self.vouchers_details_table = voucher_details
+        super(Voucher_selector, self).__init__(**kwargs)
+
+    def on_active(self, instance, value):
+        self.vouchers_details_table.load_voucher_details(self.voucher_id, value)
 
 class ButtonDropper(Button):
     _id = None
     number = NumericProperty(0)
     textinput = ObjectProperty(None)
+
 
     def __init__(self, **kwargs):
         kwargs['background_normal'] = ''
@@ -56,40 +72,37 @@ class ButtonDropper(Button):
         self.number = 0
         self.dropdown.open(self)
 
-class ProductsTable(GridLayout):
+class VouchersTable(GridLayout):
     count = NumericProperty(0)
     d = ObjectProperty(None)
-    data_object = Product()
+    data_object = Voucher()
 
     # pagination
     pages = list()
     page = list()
     page_no = 0
     current = 1
-    offset = 10
+    offset = 5
     _data = None
     data_in_page = None
+    total = ObjectProperty(None)
+    current_voucher = NumericProperty(0)
+    voucher_details = ObjectProperty(None)
+
 
     def __init__(self, **kwargs):
         self.bind(minimum_height=self.setter('height'))
-        super(ProductsTable, self).__init__(**kwargs)
+        super(VouchersTable, self).__init__(**kwargs)
         self.pagination_next()
         self.call_load()
 
-    def validate_barcode(self, barcode):
-        if barcode != '':
-            result = self.data_object.execute("SELECT brandname FROM products WHERE barcode="+barcode)
-            print result
-            if result == ():
-                pass
-            else:
-                Snackbar(text=" barcode is already used BrandName is "+str(result[0]["brandname"])).show()
-
+    def reset_total(self):
+        self.total.text = "[color='#000000'][b][size=40]0.0SDG[/size][/b][/color]"
 
     def delete_data(self, id):
         try:
             self.data_object.id = id
-            self.data_object.delete_product()
+            self.data_object.delete_voucher()
             self.pagination_next(self.current)
         except KeyError:
             print "Key Not Found"
@@ -99,11 +112,11 @@ class ProductsTable(GridLayout):
 
     def pagination_next(self, page=1):
         self.current = int(page)
-        no_pages = int(math.ceil(float(self.data_object.count_product()) / float(self.offset)))
+        no_pages = int(math.ceil(float(self.data_object.count_voucher()) / float(self.offset)))
 
         if self.current <= no_pages:
             offset = (self.current - 1) * self.offset
-            self.data_in_page = self.data_object.get_products_page(offset, self.offset)
+            self.data_in_page = self.data_object.get_vouchers_page(offset, self.offset)
             self.pages = list(self.data_in_page)
             self._data = self.pages
             self.call_load()
@@ -120,7 +133,7 @@ class ProductsTable(GridLayout):
         self.current = int(page)
         if self.current > 0:
             offset = (self.current - 1) * self.offset
-            self.data_in_page = self.data_object.get_products_page(offset, self.offset)
+            self.data_in_page = self.data_object.get_vouchers_page(offset, self.offset)
             self.pages = list(self.data_in_page)
             self._data = self.pages
             self.call_load()
@@ -136,63 +149,44 @@ class ProductsTable(GridLayout):
     def load_data(self, dt):
         self.clear_widgets()
         self.count = self.current * self.offset - self.offset + 1
-        categories_object = Category()
-        self.category_dict = categories_object.get_categories()
+        # categories_object = Category()
+        # self.category_dict = categories_object.get_categories()
+        self._data = []
+        if self.data_in_page != None:
+            self._data = sorted(list(self.data_in_page), reverse=True)
+        # print self._data
+        # print self.data_in_page
+        if self._data != []:
+            for key in self._data:
+                id = str(self.data_in_page.get(key)['id'])
+                date = str(self.data_in_page.get(key)['date'])
+                submitted_by = str(self.data_in_page.get(key)['submitted_by'])
+                status = str(self.data_in_page.get(key)['status'])
 
-        self._data = sorted(list(self.data_in_page))
+                if self.count % 2 == 1:
+                    self.d = DataWidget2(self.count,
+                                         size_hint_y=None,
+                                         height='40px')
+                else:
+                    self.d = DataWidget(self.count,
+                                        size_hint_y=None,
+                                        height='40px')
 
-        for key in self._data:
-            id = str(self.data_in_page.get(key)['id'])
-            brandname = str(self.data_in_page.get(key)['brandname'])
-            genericname = str(self.data_in_page.get(key)['genericname'])
-            quantityperunit = str(self.data_in_page.get(key)['quantityperunit'])
-            unitprice = str(self.data_in_page.get(key)['unitprice'])
-            category_id = str(self.category_dict.get( str(self.data_object.get_products().get(key)['category_id']) )['name'])
-            expiry_date = str(self.data_in_page.get(key)['expiry_date'])
-            status = str(self.data_in_page.get(key)['status'])
+                S = Voucher_selector(id, self.voucher_details, group='voucher', id="voucher_check_"+str(id))
+                # de = DeleteButton(self, self.d, id, text="delete")
+                # option = BoxLayout()
+                # here I will add the checkbox
+                # option.add_widget(S)
+                # option.add_widget(de)
 
-            size = 0
+                self.d.add_widget(DataLabel(text=str(self.count)))
+                self.d.add_widget(DataLabel(text=date))
+                self.d.add_widget(DataLabel(text=submitted_by))
+                self.d.add_widget(DataLabel(text=status))
+                self.d.add_widget(S)
 
-            if len(brandname) > len(category_id) and len(brandname) > len(genericname) :
-                size = len(brandname)
-            elif len(category_id ) > len(brandname) and len(category_id ) > len(genericname):
-                size = len(category_id)
-            elif len(genericname) > len(brandname) and len(genericname) > len(brandname):
-                size = len(genericname)
-
-            if size <= 15:
-                size = 50
-            elif size > 15:
-                size += 40
-
-            if self.count % 2 == 1:
-                self.d = DataWidget2(self.count,
-                                     size_hint_y=None,
-                                     height='{}px'.format(size))
-            else:
-                self.d = DataWidget(self.count,
-                                    size_hint_y=None,
-                                    height='{}px'.format(size))
-
-            b = EditButton(self, id, text="edit")
-            de = DeleteButton(self, self.d, id, text="delete")
-            option = BoxLayout()
-
-            option.add_widget(b)
-            option.add_widget(de)
-
-            self.d.add_widget(DataLabel(text=str(self.count), size_hint_x=None, width='40px'))
-            self.d.add_widget(DataLabel(text=brandname))
-            self.d.add_widget(DataLabel(text=genericname))
-            self.d.add_widget(DataLabel(text=quantityperunit))
-            self.d.add_widget(DataLabel(text=unitprice))
-            self.d.add_widget(DataLabel(text=category_id))
-            self.d.add_widget(DataLabel(text=expiry_date))
-            self.d.add_widget(DataLabel(text=status))
-            self.d.add_widget(option)
-
-            super(ProductsTable, self).add_widget(self.d)
-            self.count += 1
+                super(VouchersTable, self).add_widget(self.d)
+                self.count += 1
 
     def save_edited_data(self, id, brandname, genericname, quantityperunit, unitprice, category_id, expiry_date, status):
         self.data_object.id = id
@@ -203,7 +197,7 @@ class ProductsTable(GridLayout):
         self.data_object.category_id = category_id
         self.data_object.expiry_date = expiry_date
         self.data_object.status = status
-        self.data_object.update_product()
+        self.data_object.update_voucher()
         self.dialog.dismiss()
         self.pagination_next()
 
@@ -266,7 +260,7 @@ class ProductsTable(GridLayout):
                              width="90px"))
         b.add_widget(status_wid)
 
-        self.dialog = MDDialog(title="Update Product",
+        self.dialog = MDDialog(title="Update Vocuher",
                                content=b,
                                size_hint=(None, None),
                                height="500px",
@@ -281,21 +275,20 @@ class ProductsTable(GridLayout):
         self.pagination_next()
         self.call_load()
 
-    def add_data(self, product_barcode, brandname, genericname, quantityperunit, unitprice, category_id, expiry_date, status):
-        self.data_object.barcode = product_barcode
-        self.data_object.brandname = brandname
-        self.data_object.genericname = genericname
-        self.data_object.quantityperunit = quantityperunit
-        self.data_object.unitprice = unitprice
-        self.data_object.category_id = category_id
-        self.data_object.expiry_date = expiry_date
+    def add_new_voucher(self, date, submitted_by, status):
+        self.data_object.date = date
+        self.data_object.submitted_by = submitted_by
         self.data_object.status = status
-        if product_barcode != '':
-            if brandname != '' and genericname != '' and quantityperunit != '' and unitprice != '' and category_id != '' and expiry_date != '' and status != '':
-                self.data_object.insert_product()
+
+        if date != '':
+            if submitted_by != '' and status != '':
+                self.data_object.insert_voucher()
+                current_vouch = self.data_object.execute("SELECT id FROM vouchers ORDER BY id DESC LIMIT 1")[0]['id']
+                self.current_voucher = current_vouch
             else:
                 Snackbar(text=" You Need To Fill All Fields ").show()
         else:
             Snackbar(text=" You Need To Add Barcode It's Important ").show()
+
         self.pagination_next()
         self.call_load()
